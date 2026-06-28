@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}AutoTrans{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- truque com checkbox: abre/fecha o menu lateral sem precisar de JavaScript -->
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="hamburger" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+    </label>
+    <label for="menu-toggle" class="overlay"></label>
+
+    <aside class="sidebar">
+        <a class="sidebar-titulo" href="{{ url_for('dashboard.index') }}">AutoTrans</a>
+        <a href="#">Perfil</a>
+        <a href="#">Materiais</a>
+        <a href="#">Teste diário</a>
+        <a href="#">Mais</a>
+    </aside>
+
+    <div class="area-conteudo">
+        <header class="topo">
+            <span class="topo-titulo">{% block titulo_pagina %}Início{% endblock %}</span>
+        </header>
+        <main class="container">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

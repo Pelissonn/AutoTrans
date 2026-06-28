@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}{{ categoria.nome }} — Material{% endblock %}
+{% block titulo_pagina %}{{ categoria.nome }}{% endblock %}
+
+{% block content %}
+<p>{{ categoria.descricao }}</p>
+
+{% if categoria.materiais %}
+    {% for material in categoria.materiais %}
+    <div class="card">
+        <p>{{ material.conteudo }}</p>
+        {% if material.url %}
+        <a href="{{ material.url }}" target="_blank">Saiba mais</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+<p>Nenhum material cadastrado ainda.</p>
+{% endif %}
+
+<p><a href="{{ url_for('dashboard.index') }}">← Voltar</a></p>
+{% endblock %}

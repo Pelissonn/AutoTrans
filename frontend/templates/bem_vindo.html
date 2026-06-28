@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoTrans</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="topo-simples">AutoTrans</header>
+    <main class="boas-vindas">
+        <h1>Bem vindo!</h1>
+        <a class="btn-entrar" href="{{ url_for('dashboard.index') }}">Entrar</a>
+    </main>
+</body>
+</html>

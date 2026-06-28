@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}Resultado — {{ simulado.titulo }}{% endblock %}
+{% block titulo_pagina %}Resultado{% endblock %}
+
+{% block content %}
+<h1>{% if aprovado %}Aprovado!{% else %}Não foi essa vez{% endif %}</h1>
+<p>Nota: {{ resultado.nota }} / {{ simulado.pontuacao_max }}</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Questão</th>
+            <th>Sua resposta</th>
+            <th>Resultado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in simulado.itens %}
+        <tr>
+            <td>{{ item.questao.enunciado }}</td>
+            <td>{{ item.alternativa_escolhida.texto if item.alternativa_escolhida else "Não respondida" }}</td>
+            <td>{{ "Certo" if item.acerto else "Errado" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><a class="btn" href="{{ url_for('simulado.iniciar', categoria_id=simulado.categoria_id) }}">Tentar outro simulado</a></p>
+<p><a href="{{ url_for('dashboard.index') }}">← Voltar para o início</a></p>
+{% endblock %}

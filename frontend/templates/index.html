@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block title %}Início — AutoTrans{% endblock %}
+{% block titulo_pagina %}Início{% endblock %}
+
+{% block content %}
+{% if categorias %}
+<div class="lista-categorias">
+    {% for categoria in categorias %}
+    <a class="linha-categoria" href="{{ url_for('dashboard.material', categoria_id=categoria.id) }}">
+        <span>{{ categoria.nome }}</span>
+        <span class="progresso">progresso</span>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<p>Nenhuma categoria cadastrada ainda.</p>
+{% endif %}
+{% endblock %}

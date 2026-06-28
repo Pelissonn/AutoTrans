@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}{{ simulado.titulo }}{% endblock %}
+{% block titulo_pagina %}{{ simulado.titulo }}{% endblock %}
+
+{% block content %}
+
+<form method="POST" action="{{ url_for('simulado.finalizar', simulado_id=simulado.id) }}">
+    {% for item in simulado.itens %}
+    <div class="form-grupo">
+        <label>{{ loop.index }}. {{ item.questao.enunciado }}</label>
+        {% for alternativa in item.questao.alternativas %}
+        <div>
+            <input type="radio" name="item_{{ item.id }}" value="{{ alternativa.id }}" required>
+            {{ alternativa.texto }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit">Finalizar simulado</button>
+</form>
+{% endblock %}
