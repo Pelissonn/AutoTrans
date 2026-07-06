@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}Lista de Materiais{% endblock %}
+{% block titulo_pagina %}Materiais Cadastrados{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a class="btn" href="{{ url_for('material.cadastrar') }}">Novo Material</a>
+</div>
+
+<table style="width: 100%; text-align: left; border-collapse: collapse;">
+    <tr style="border-bottom: 2px solid #ccc;">
+        <th>ID</th>
+        <th>Conteúdo</th>
+        <th>URL</th>
+        <th>Categoria</th>
+        <th>Ações</th>
+    </tr>
+    
+    {% for m in materiais %}
+    <tr style="border-bottom: 1px solid #eee;">
+        <td>{{ m.id }}</td>
+        <td>{{ m.conteudo }}</td>
+        <td><a href="{{ m.url }}" target="_blank" style="color: blue;">{{ m.url }}</a></td>
+        <td>{{ m.categoria.nome if m.categoria else "Sem categoria" }}</td>
+        <td>
+            <a href="{{ url_for('material.editar', id=m.id) }}" style="color: blue; margin-right: 15px;">Editar</a>
+            <form method="POST" action="{{ url_for('material.deletar', id=m.id) }}" style="display:inline;">
+                <button type="submit" onclick="return confirm('Tem a certeza que deseja eliminar este material?');" style="color: red; background: none; border: none; cursor: pointer; text-decoration: underline;">
+                    Eliminar
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">Nenhum material cadastrado.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

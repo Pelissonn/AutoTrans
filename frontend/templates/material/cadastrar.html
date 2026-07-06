@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}Novo Material{% endblock %}
+{% block titulo_pagina %}Adicionar Material{% endblock %}
+
+{% block content %}
+    {% if erro %}
+        <p style="color: red; font-weight: bold;">{{ erro }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('material.cadastrar') }}">
+        <div class="form-grupo">
+            <label>Conteúdo do Material:</label>
+            <input type="text" name="conteudo" required>
+        </div>
+        
+        <div class="form-grupo">
+            <label>URL do Material:</label>
+            <input type="url" name="url" required>
+        </div>
+        
+        <div class="form-grupo">
+            <label>Categoria:</label>
+            <select name="categoria_id" required>
+                <option value="" disabled selected>Selecione uma categoria...</option>
+                {% for c in categorias %}
+                    <option value="{{ c.id }}">{{ c.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit" class="btn">Salvar Material</button>
+        <a href="{{ url_for('material.listar') }}" style="margin-left: 10px;">Cancelar</a>
+    </form>
+{% endblock %}

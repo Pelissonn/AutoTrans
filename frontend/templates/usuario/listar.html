@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}Lista de Utilizadores{% endblock %}
+{% block titulo_pagina %}Utilizadores{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a class="btn" href="{{ url_for('usuario.cadastrar') }}">Novo Utilizador</a>
+</div>
+
+<table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <thead>
+        <tr style="border-bottom: 1px solid #ccc;">
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+        <tr style="border-bottom: 1px solid #eee;">
+            <td>{{ u.id }}</td>
+            <td>{{ u.nome }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+                <a href="{{ url_for('usuario.editar', id=u.id) }}">Editar</a>
+                
+                <form method="POST" action="{{ url_for('usuario.deletar', id=u.id) }}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Tem a certeza que deseja eliminar este utilizador?');" style="color: red; border: none; background: none; cursor: pointer; text-decoration: underline;">
+                        Eliminar
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4">Nenhum utilizador registado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

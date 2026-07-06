@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}Lista de Alternativas{% endblock %}
+{% block titulo_pagina %}Alternativas Cadastradas{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a class="btn" href="{{ url_for('alternativa.cadastrar') }}">Nova Alternativa</a>
+</div>
+
+<table style="width: 100%; text-align: left; border-collapse: collapse;">
+    <tr style="border-bottom: 2px solid #ccc;">
+        <th>ID</th>
+        <th>Texto da Alternativa</th>
+        <th>É a Correta?</th>
+        <th>Questão</th>
+        <th>Ações</th>
+    </tr>
+    
+    {% for a in alternativas %}
+    <tr style="border-bottom: 1px solid #eee;">
+        <td>{{ a.id }}</td>
+        <td>{{ a.texto }}</td>
+        {% if a.correta %}
+            <td style="font-weight: bold; color: green;">Sim</td>
+        {% else %}
+            <td style="font-weight: bold; color: red;">Não</td>
+        {% endif %}
+        <td>{{ a.questao.enunciado if a.questao else "Sem questão associada" }}</td>
+        <td>
+            <a href="{{ url_for('alternativa.editar', id=a.id) }}" style="color: blue; margin-right: 15px;">Editar</a>
+            <form method="POST" action="{{ url_for('alternativa.deletar', id=a.id) }}" style="display:inline;">
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar esta alternativa?');" style="color: red; background: none; border: none; cursor: pointer; text-decoration: underline;">
+                    Deletar
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">Nenhuma alternativa cadastrada.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Editar Categoria{% endblock %}
+{% block titulo_pagina %}Editar Categoria: {{ categoria.nome }}{% endblock %}
+
+{% block content %}
+    {% if erro %}
+        <p style="color: red; font-weight: bold;">{{ erro }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('categoria.editar', id=categoria.id) }}">
+        <div class="form-grupo">
+            <label>Nome da Categoria:</label>
+            <input type="text" name="nome" value="{{ categoria.nome }}" required>
+        </div>
+        
+        <div class="form-grupo">
+            <label>Descrição (opcional):</label>
+            <input type="text" name="descricao" value="{{ categoria.descricao if categoria.descricao else '' }}">
+        </div>
+        
+        <button type="submit" class="btn">Atualizar Dados</button>
+        <a href="{{ url_for('categoria.listar') }}" style="margin-left: 10px;">Cancelar</a>
+    </form>
+{% endblock %}

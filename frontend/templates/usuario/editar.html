@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Editar Usuário{% endblock %}
+{% block titulo_pagina %}Editar Usuário: {{ usuario.nome }}{% endblock %}
+
+{% block content %}
+    {% if erro %}
+        <p style="color: red; font-weight: bold;">{{ erro }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('usuario.editar', id=usuario.id) }}">
+        <div class="form-grupo">
+            <label>Nome:</label>
+            <input type="text" name="nome" value="{{ usuario.nome }}" required>
+        </div>
+        
+        <div class="form-grupo">
+            <label>E-mail:</label>
+            <input type="email" name="email" value="{{ usuario.email }}" required>
+        </div>
+        
+        <button type="submit" class="btn">Atualizar Dados</button>
+        <a href="{{ url_for('usuario.listar') }}" style="margin-left: 10px;">Cancelar</a>
+    </form>
+{% endblock %}

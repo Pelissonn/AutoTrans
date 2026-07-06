@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Lista de Categorias{% endblock %}
+{% block titulo_pagina %}Categorias Cadastradas{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a class="btn" href="{{ url_for('categoria.cadastrar') }}">Nova Categoria</a>
+</div>
+
+<table style="width: 100%; text-align: left; border-collapse: collapse;">
+    <tr style="border-bottom: 2px solid #ccc;">
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Ações</th>
+    </tr>
+    
+    {% for c in categorias %}
+    <tr style="border-bottom: 1px solid #eee;">
+        <td>{{ c.id }}</td>
+        <td>{{ c.nome }}</td>
+        <td>{{ c.descricao if c.descricao else "Sem descrição" }}</td>
+        <td>
+            <a href="{{ url_for('categoria.editar', id=c.id) }}" style="color: blue; margin-right: 15px;">
+                Editar
+            </a>
+            
+            <form method="POST" action="{{ url_for('categoria.deletar', id=c.id) }}" style="display:inline;">
+                <button type="submit" 
+                        onclick="return confirm('Tem a certeza que deseja eliminar esta categoria?');" 
+                        style="color: red; background: none; border: none; cursor: pointer; text-decoration: underline;">
+                    Eliminar
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="4">Nenhuma categoria registada.</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

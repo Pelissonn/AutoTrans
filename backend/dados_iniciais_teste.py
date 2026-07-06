@@ -41,7 +41,8 @@ def popular_dados():
             categoria_id=categoria_regras.id,
             conteudo=(
                 "Em cruzamentos sem sinalização, a prioridade é de quem vem pela "
-                "direita do condutor. A distância de segurança entre veículos deve "
+                "direita do condutor. A distância de segurança entre veículos deve ",
+                
                 "aumentar conforme a velocidade."
             ),
             url="https://www.gov.br/transportes/pt-br/assuntos/transito",

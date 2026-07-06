@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Editar Alternativa{% endblock %}
+{% block titulo_pagina %}Editar Alternativa{% endblock %}
+
+{% block content %}
+    {% if erro %}
+        <p style="color: red; font-weight: bold;">{{ erro }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('alternativa.editar', id=alternativa.id) }}">
+        <div class="form-grupo">
+            <label>Texto da Alternativa:</label>
+            <textarea name="texto" rows="3" style="width: 100%;" required>{{ alternativa.texto }}</textarea>
+        </div>
+        
+        <div class="form-grupo" style="margin-top: 15px; margin-bottom: 15px;">
+            <label style="cursor: pointer;">
+                <input type="checkbox" name="correta" value="True" {% if alternativa.correta %}checked{% endif %}> 
+                Marcar como a alternativa CORRETA
+            </label>
+        </div>
+        
+        <div class="form-grupo">
+            <label>Vincular à Questão:</label>
+            <select name="questao_id" required>
+                {% for q in questoes %}
+                    <option value="{{ q.id }}" {% if q.id == alternativa.questao_id %}selected{% endif %}>
+                        {{ q.id }} - {{ q.enunciado }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit" class="btn" style="margin-top: 15px;">Atualizar Dados</button>
+        <a href="{{ url_for('alternativa.listar') }}" style="margin-left: 10px;">Cancelar</a>
+    </form>
+{% endblock %}
