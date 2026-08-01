@@ -1,30 +1,43 @@
 {% extends "layout.html" %}
-{% block title %}Resultado — {{ simulado.titulo }}{% endblock %}
-{% block titulo_pagina %}Resultado{% endblock %}
+{% block title %}Resultado — AutoTrans{% endblock %}
 
 {% block content %}
-<h1>{% if aprovado %}Aprovado!{% else %}Não foi essa vez{% endif %}</h1>
-<p>Nota: {{ resultado.nota }} / {{ simulado.pontuacao_max }}</p>
+<div class="screen active" style="padding: 40px 25px; position: relative; overflow: hidden;">
+    <div class="mascot-container" style="font-size: 80px;">
+        {% if aprovado %}🦝🎉{% else %}🦝😕{% endif %}
+    </div>
+    <h2 style="color: var(--btn-green); margin-bottom: 10px;">
+        {% if aprovado %}Aprovado!{% else %}Não foi dessa vez{% endif %}
+    </h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>Questão</th>
-            <th>Sua resposta</th>
-            <th>Resultado</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in simulado.itens %}
-        <tr>
-            <td>{{ item.questao.enunciado }}</td>
-            <td>{{ item.alternativa_escolhida.texto if item.alternativa_escolhida else "Não respondida" }}</td>
-            <td>{{ "Certo" if item.acerto else "Errado" }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <div class="result-stats">
+        <div class="stat-box">
+            <span class="stat-value">{{ resultado.nota }}</span>
+            <span class="stat-label">Nota</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-value">{{ simulado.pontuacao_max }}</span>
+            <span class="stat-label">Máximo</span>
+        </div>
+    </div>
 
-<p><a class="btn" href="{{ url_for('simulado.iniciar', categoria_id=simulado.categoria_id) }}">Tentar outro simulado</a></p>
-<p><a href="{{ url_for('dashboard.index') }}">← Voltar para o início</a></p>
+    {% for item in simulado.itens %}
+    <div class="card" style="text-align: left; margin-bottom: 10px; border-color: {% if item.acerto %}var(--btn-green){% else %}#e53e3e{% endif %};">
+        <p style="text-align: left; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">
+            {{ item.questao.enunciado }}
+        </p>
+        <p style="text-align: left; margin: 0;">
+            {{ item.alternativa_escolhida.texto if item.alternativa_escolhida else "Não respondida" }}
+            {% if item.acerto %}✅{% else %}❌{% endif %}
+        </p>
+    </div>
+    {% endfor %}
+
+    <div style="width: 100%; margin-top: 20px; display: flex; flex-direction: column; gap: 4px;">
+        <a href="{{ url_for('simulado.iniciar', categoria_id=simulado.categoria_id) }}"
+           class="btn btn-green">Tentar novamente</a>
+        <a href="{{ url_for('dashboard.index') }}"
+           class="btn btn-dark-green">← Voltar ao início</a>
+    </div>
+</div>
 {% endblock %}

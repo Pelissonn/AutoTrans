@@ -2,32 +2,60 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AutoTrans{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <!-- truque com checkbox: abre/fecha o menu lateral sem precisar de JavaScript -->
+<body class="app-body">
     <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <aside class="sidebar">
+        <a href="{{ url_for('dashboard.index') }}" class="sidebar-logo">🚗 AutoTrans</a>
+        <nav>
+            <a href="{{ url_for('dashboard.index') }}"
+               class="sidebar-link">🏠 Início</a>
+            <a href="{{ url_for('dashboard.index') }}#screen-profile"
+               class="sidebar-link">👤 Perfil</a>
+            <a href="{{ url_for('dashboard.index') }}"
+               class="sidebar-link">📚 Materiais</a>
+            <a href="{{ url_for('dashboard.index') }}#screen-ranking"
+               class="sidebar-link">🏆 Ranking</a>
+            <a href="{{ url_for('dashboard.index') }}#screen-flashcards"
+               class="sidebar-link">🪧 Placas</a>
+            <a href="{{ url_for('usuario.listar') }}"
+               class="sidebar-link">🛠️ Gerir Usuários</a>
+            <a href="{{ url_for('categoria.listar') }}"
+               class="sidebar-link">🛠️ Gerir Categorias</a>
+            <a href="{{ url_for('questao.listar') }}"
+               class="sidebar-link">🛠️ Gerir Questões</a>
+            <a href="{{ url_for('alternativa.listar') }}"
+               class="sidebar-link">🛠️ Gerir Alternativas</a>
+            <a href="{{ url_for('material.listar') }}"
+               class="sidebar-link">🛠️ Gerir Materiais</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-theme-row">
+                <span>Modo Escuro</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle-switch">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <a href="{{ url_for('dashboard.bem_vindo') }}" class="sidebar-sair">← Sair</a>
+        </div>
+    </aside>
+    <label for="menu-toggle" class="sidebar-overlay"></label>
     <label for="menu-toggle" class="hamburger" aria-label="Abrir menu">
         <span></span><span></span><span></span>
     </label>
-    <label for="menu-toggle" class="overlay"></label>
 
-    <aside class="sidebar">
-        <a class="sidebar-titulo" href="{{ url_for('dashboard.index') }}">AutoTrans</a>
-        <a href="#">Perfil</a>
-        <a href="#">Materiais</a>
-        <a href="#">Teste diário</a>
-        <a href="#">Mais</a>
-    </aside>
-
-    <div class="area-conteudo">
-        <header class="topo">
-            <span class="topo-titulo">{% block titulo_pagina %}Início{% endblock %}</span>
-        </header>
-        <main class="container">
+    <div class="mobile-container">
+        <div class="conteudo-pagina">
+            <h2 class="titulo-pagina">{% block titulo_pagina %}{% endblock %}</h2>
             {% block content %}{% endblock %}
-        </main>
+        </div>
     </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

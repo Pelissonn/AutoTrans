@@ -1,22 +1,28 @@
 {% extends "layout.html" %}
-{% block title %}{{ categoria.nome }} — Material{% endblock %}
-{% block titulo_pagina %}{{ categoria.nome }}{% endblock %}
+{% block title %}{{ categoria.nome }} — AutoTrans{% endblock %}
 
 {% block content %}
-<p>{{ categoria.descricao }}</p>
+<div class="screen active" style="padding: 40px 25px;">
+    <h2 style="margin-bottom: 10px;">{{ categoria.nome }}</h2>
+    <p>{{ categoria.descricao }}</p>
 
-{% if categoria.materiais %}
-    {% for material in categoria.materiais %}
-    <div class="card">
-        <p>{{ material.conteudo }}</p>
-        {% if material.url %}
-        <a href="{{ material.url }}" target="_blank">Saiba mais</a>
-        {% endif %}
+    {% if categoria.materiais %}
+        {% for material in categoria.materiais %}
+        <div class="card" style="text-align: left; margin-bottom: 15px;">
+            <p style="text-align: left;">{{ material.conteudo }}</p>
+            {% if material.url %}
+            <a href="{{ material.url }}" target="_blank" rel="noopener"
+               style="color: var(--btn-green); font-weight: 600; font-size: 13px;">Saiba mais →</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+    <p>Nenhum material cadastrado para esta categoria ainda.</p>
+    {% endif %}
+
+    <div style="width: 100%; margin-top: auto; padding-top: 20px;">
+        <button class="btn btn-green">✏️ Iniciar Simulado</button>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-dark-green">← Voltar</a>
     </div>
-    {% endfor %}
-{% else %}
-<p>Nenhum material cadastrado ainda.</p>
-{% endif %}
-
-<p><a href="{{ url_for('dashboard.index') }}">← Voltar</a></p>
+</div>
 {% endblock %}

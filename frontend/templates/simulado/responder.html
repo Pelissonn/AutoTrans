@@ -1,21 +1,25 @@
 {% extends "layout.html" %}
-{% block title %}{{ simulado.titulo }}{% endblock %}
-{% block titulo_pagina %}{{ simulado.titulo }}{% endblock %}
+{% block title %}{{ simulado.titulo }} — AutoTrans{% endblock %}
 
 {% block content %}
+<div class="screen active" style="padding: 40px 25px;">
+    <h2 style="margin-bottom: 20px;">{{ simulado.titulo }}</h2>
 
-<form method="POST" action="{{ url_for('simulado.finalizar', simulado_id=simulado.id) }}">
-    {% for item in simulado.itens %}
-    <div class="form-grupo">
-        <label>{{ loop.index }}. {{ item.questao.enunciado }}</label>
-        {% for alternativa in item.questao.alternativas %}
-        <div>
-            <input type="radio" name="item_{{ item.id }}" value="{{ alternativa.id }}" required>
-            {{ alternativa.texto }}
+    <form method="POST" action="{{ url_for('simulado.finalizar', simulado_id=simulado.id) }}">
+        {% for item in simulado.itens %}
+        <div class="card" style="text-align: left; margin-bottom: 15px;">
+            <p style="text-align: left; font-weight: 600; color: var(--text-primary);">
+                {{ loop.index }}. {{ item.questao.enunciado }}
+            </p>
+            {% for alternativa in item.questao.alternativas %}
+            <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--input-bg); border-radius: 12px; margin-top: 8px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--text-primary);">
+                <input type="radio" name="item_{{ item.id }}" value="{{ alternativa.id }}" required style="width: auto;">
+                {{ alternativa.texto }}
+            </label>
+            {% endfor %}
         </div>
         {% endfor %}
-    </div>
-    {% endfor %}
-    <button type="submit">Finalizar simulado</button>
-</form>
+        <button type="submit" class="btn btn-green">Finalizar Simulado</button>
+    </form>
+</div>
 {% endblock %}

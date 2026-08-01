@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}Nova Questão{% endblock %}
+{% block titulo_pagina %}Adicionar Questão{% endblock %}
+
+{% block content %}
+    {% if erro %}
+        <p style="color: red; font-weight: bold;">{{ erro }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('questao.cadastrar') }}">
+        <div class="form-grupo">
+            <label>Enunciado da Questão:</label>
+            <input type="text" name="enunciado" required>
+        </div>
+
+        <div class="form-grupo">
+            <label>Categoria:</label>
+            <select name="categoria_id" required>
+                {% for c in categorias %}
+                <option value="{{ c.id }}">{{ c.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn">Salvar Questão</button>
+        <a href="{{ url_for('questao.listar') }}" style="margin-left: 10px;">Cancelar</a>
+    </form>
+{% endblock %}
