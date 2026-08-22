@@ -1,56 +1,85 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from models import Categoria
+from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
+
+from auth_utils import admin_obrigatorio
+from models import db
 from services.categorias.create_categoria_service import CadastrarCategoriaService
-from services.categorias.read_categoria_service import ListarCategoriasService
+from services.categorias.read_categoria_service import (
+    BuscarCategoriaPorIdService,
+    ListarCategoriasService,
+)
 from services.categorias.update_categoria_service import EditarCategoriaService
 from services.categorias.delete_categoria_service import DeletarCategoriaService
 
-categoria_bp = Blueprint('categoria', __name__,url_prefix="/categorias")
+categoria_bp = Blueprint("categoria", __name__, url_prefix="/categorias")
 
-@categoria_bp.route("/")
-def listar():   
+# Listar/buscar categorias continua público (todo aluno precisa ver as
+# trilhas). Só cadastrar/editar/apagar exige administrador.
+
+
+@categoria_bp.get("/")
+def listar():
     service = ListarCategoriasService()
     categorias = service.executar()
-    lista = [{"id": c.id, "nome": c.nome, "descricao": c.descricao} for c in categorias]
-    return render_template("categoria/listar.html", categorias=categorias)
+    return jsonify(categorias), 200
 
-@categoria_bp.route("/cadastrar", methods=["GET", "POST"])
+
+@categoria_bp.get("/<int:id>")
+def buscar(id):
+    service = BuscarCategoriaPorIdService()
+    categoria = service.executar(id)
+
+    if categoria is None:
+        return jsonify({"erro": "Categoria não encontrada."}), 404
+
+    return jsonify(categoria), 200
+
+
+@categoria_bp.post("/")
+@admin_obrigatorio
 def cadastrar():
-    if request.method == "GET":
-        return render_template("categoria/cadastrar.html")
-    nome = request.form.get("nome")
-    descricao = request.form.get("descricao")
-    service = CadastrarCategoriaService()
     try:
-        service.executar(nome, descricao)
-        # Se deu certo, manda de volta para a lista de categorias
-        return redirect(url_for("categoria.listar"))
-    except ValueError as e:
-        # Se deu erro no Service, mostra a tela de cadastro de novo com a mensagem de erro
-        return render_template("categoria/cadastrar.html", erro=str(e))
+        dados = request.get_json() or {}
+        service = CadastrarCategoriaService()
+        categoria = service.executar(dados.get("nome"), dados.get("descricao"))
+        return jsonify(categoria), 201
 
-@categoria_bp.route("/<int:id>/editar", methods=["GET", "POST"])
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao salvar categoria no banco de dados."}), 500
+
+
+@categoria_bp.put("/<int:id>")
+@admin_obrigatorio
 def editar(id):
-    if request.method == "GET":
-        # Vai ao banco de dados procurar a categoria para preencher o formulário
-        categoria = Categoria.query.get(id)
-        return render_template("categoria/editar.html", categoria=categoria)
-
-    nome = request.form.get("nome")
-    descricao = request.form.get("descricao")
-    service = EditarCategoriaService()
-    
     try:
-        service.executar(id, nome, descricao)
-        # Se deu certo, volta para a lista
-        return redirect(url_for("categoria.listar"))
-    except ValueError as e:
-        categoria = Categoria.query.get(id)
-        return render_template("categoria/editar.html", categoria=categoria, erro=str(e))
+        dados = request.get_json() or {}
+        service = EditarCategoriaService()
+        categoria = service.executar(id, dados.get("nome"), dados.get("descricao"))
+        return jsonify(categoria), 200
 
-@categoria_bp.route("/<int:id>/deletar", methods=["POST"])
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao atualizar categoria no banco de dados."}), 500
+
+
+@categoria_bp.delete("/<int:id>")
+@admin_obrigatorio
 def deletar(id):
-    service = DeletarCategoriaService()
-    service.executar(id)
-    # Apaga e volta à lista de imediato
-    return redirect(url_for("categoria.listar"))
+    try:
+        service = DeletarCategoriaService()
+        service.executar(id)
+        return "", 204
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao deletar categoria no banco de dados."}), 500

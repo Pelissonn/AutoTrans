@@ -1,23 +1,14 @@
-from models import db, Alternativa, Questao
+from models import Alternativa
 
-class AtualizarAlternativaService:
-    def executar(self, alternativa_id, questao_id, texto, correta):
-        alternativa = Alternativa.query.get(alternativa_id)
-        if not alternativa:
+
+class EditarAlternativaService:
+    def executar(self, alternativa_id, texto, correta):
+        alternativa = Alternativa.buscar_por_id(alternativa_id)
+        if alternativa is None:
             raise ValueError("Alternativa não encontrada.")
 
-        if not questao_id:
-            raise ValueError("O ID da questão é obrigatório.")
         if not texto:
             raise ValueError("O texto da alternativa é obrigatório.")
-        if correta not in [True, False]:
-            raise ValueError("O valor de 'correta' deve ser True ou False.")
 
-        questao = Questao.query.get(questao_id)
-        if not questao:
-            raise ValueError("Questão não encontrada.")
-
-        alternativa.questao_id = questao_id
-        alternativa.texto = texto
-        alternativa.correta = correta
-        db.session.commit()
+        alternativa.atualizar(texto=texto, correta=correta)
+        return alternativa.to_dict()

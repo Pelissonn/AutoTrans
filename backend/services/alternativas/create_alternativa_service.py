@@ -1,18 +1,15 @@
-from models import Alternativa, db, Questao
+from models import Alternativa, Questao
+
 
 class CadastrarAlternativaService:
-    def executar(self, questao_id, texto, correta):
-        if not questao_id:
-            raise ValueError("O ID da questão é obrigatório.")
+    def executar(self, questao_id, texto, correta=False):
         if not texto:
             raise ValueError("O texto da alternativa é obrigatório.")
-        if correta not in [True, False]:
-            raise ValueError("O valor de 'correta' deve ser True ou False.")
 
-        questao = Questao.query.get(questao_id)
-        if not questao:
+        questao = Questao.buscar_por_id(questao_id)
+        if questao is None:
             raise ValueError("Questão não encontrada.")
 
-        alternativa = Alternativa(questao_id=questao_id, texto=texto, correta=correta)
-        db.session.add(alternativa)
-        db.session.commit()
+        alternativa = Alternativa(questao_id=questao_id, texto=texto, correta=bool(correta))
+        alternativa.salvar()
+        return alternativa.to_dict()

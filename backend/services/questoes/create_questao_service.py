@@ -1,15 +1,15 @@
-from models import db, Questao, Categoria
+from models import Categoria, Questao
+
 
 class CadastrarQuestaoService:
     def executar(self, enunciado, categoria_id):
         if not enunciado:
             raise ValueError("O enunciado da questão é obrigatório.")
-        
-        categoria = Categoria.query.get(categoria_id)
-        if not categoria:
+
+        categoria = Categoria.buscar_por_id(categoria_id)
+        if categoria is None:
             raise ValueError("Categoria não encontrada.")
-        
+
         questao = Questao(enunciado=enunciado, categoria_id=categoria_id)
-        db.session.add(questao)
-        db.session.commit()
-    
+        questao.salvar()
+        return questao.to_dict()

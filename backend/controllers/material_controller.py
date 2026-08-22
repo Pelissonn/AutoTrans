@@ -1,59 +1,92 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from models import Material, Categoria 
+from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
+
+from auth_utils import admin_obrigatorio
+from models import db
 from services.materiais.create_material_service import CadastrarMaterialService
-from services.materiais.read_material_service import ListarMateriaisService
+from services.materiais.read_material_service import (
+    BuscarMaterialPorIdService,
+    ListarMateriaisPorCategoriaService,
+    ListarMateriaisService,
+)
 from services.materiais.update_material_service import EditarMaterialService
 from services.materiais.delete_material_service import DeletarMaterialService
 
-material_bp = Blueprint('material', __name__,url_prefix="/materiais")
+material_bp = Blueprint("material", __name__, url_prefix="/materiais")
 
-@material_bp.route("/")
+
+@material_bp.get("/")
 def listar():
-    service = ListarMateriaisService()
-    materiais = service.executar()
-    return render_template("material/listar.html", materiais=materiais)
+    categoria_id = request.args.get("categoria_id")
 
-@material_bp.route("/cadastrar", methods=["GET", "POST"])
+    if categoria_id:
+        service = ListarMateriaisPorCategoriaService()
+        materiais = service.executar(categoria_id)
+    else:
+        service = ListarMateriaisService()
+        materiais = service.executar()
+
+    return jsonify(materiais), 200
+
+
+@material_bp.get("/<int:id>")
+def buscar(id):
+    service = BuscarMaterialPorIdService()
+    material = service.executar(id)
+
+    if material is None:
+        return jsonify({"erro": "Material não encontrado."}), 404
+
+    return jsonify(material), 200
+
+
+@material_bp.post("/")
+@admin_obrigatorio
 def cadastrar():
-    if request.method == "GET":
-        categorias = Categoria.query.all() 
-        return render_template("material/cadastrar.html", categorias=categorias)
-    
-    conteudo = request.form.get("conteudo")
-    url = request.form.get("url")
-    categoria_id = request.form.get("categoria_id")
-    
-    service = CadastrarMaterialService()
     try:
-        service.executar(conteudo, url, categoria_id)
-        return redirect(url_for("material.listar"))
-    except ValueError as e:
-        categorias = Categoria.query.all()
-        return render_template("material/cadastrar.html", erro=str(e), categorias=categorias)
+        dados = request.get_json() or {}
+        service = CadastrarMaterialService()
+        material = service.executar(
+            dados.get("categoria_id"), dados.get("conteudo"), dados.get("url")
+        )
+        return jsonify(material), 201
 
-@material_bp.route("/<int:id>/editar", methods=["GET", "POST"])
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao salvar material no banco de dados."}), 500
+
+
+@material_bp.put("/<int:id>")
+@admin_obrigatorio
 def editar(id):
-    if request.method == "GET":
-        material = Material.query.get(id)
-        # <-- ADICIONADO: Busca as categorias para o HTML montar a caixinha
-        categorias = Categoria.query.all()
-        return render_template("material/editar.html", material=material, categorias=categorias)
-
-    conteudo = request.form.get("conteudo")
-    url = request.form.get("url")
-    categoria_id = request.form.get("categoria_id")
-    
-    service = EditarMaterialService()
     try:
-        service.executar(id, conteudo, url, categoria_id)
-        return redirect(url_for("material.listar"))
-    except ValueError as e:
-        material = Material.query.get(id)
-        categorias = Categoria.query.all()
-        return render_template("material/editar.html", material=material, categorias=categorias, erro=str(e))
+        dados = request.get_json() or {}
+        service = EditarMaterialService()
+        material = service.executar(id, dados.get("conteudo"), dados.get("url"))
+        return jsonify(material), 200
 
-@material_bp.route("/<int:id>/deletar", methods=["POST"])
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao atualizar material no banco de dados."}), 500
+
+
+@material_bp.delete("/<int:id>")
+@admin_obrigatorio
 def deletar(id):
-    service = DeletarMaterialService()
-    service.executar(id)
-    return redirect(url_for("material.listar"))
+    try:
+        service = DeletarMaterialService()
+        service.executar(id)
+        return "", 204
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao deletar material no banco de dados."}), 500

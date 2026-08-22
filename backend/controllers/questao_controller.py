@@ -1,57 +1,90 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from models import Questao, Categoria
+from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
+
+from auth_utils import admin_obrigatorio
+from models import db
 from services.questoes.create_questao_service import CadastrarQuestaoService
-from services.questoes.read_questao_service import ListarQuestoesService
+from services.questoes.read_questao_service import (
+    BuscarQuestaoPorIdService,
+    ListarQuestoesPorCategoriaService,
+    ListarQuestoesService,
+)
 from services.questoes.update_questao_service import EditarQuestaoService
 from services.questoes.delete_questao_service import DeletarQuestaoService
 
-questao_bp = Blueprint('questao', __name__,url_prefix="/questoes")
+questao_bp = Blueprint("questao", __name__, url_prefix="/questoes")
 
-@questao_bp.route("/")
+
+@questao_bp.get("/")
 def listar():
-    service = ListarQuestoesService()
-    questoes = service.executar()
-    return render_template("questao/listar.html", questoes=questoes)
+    categoria_id = request.args.get("categoria_id")
 
-@questao_bp.route("/cadastrar", methods=["GET", "POST"])
+    if categoria_id:
+        service = ListarQuestoesPorCategoriaService()
+        questoes = service.executar(categoria_id)
+    else:
+        service = ListarQuestoesService()
+        questoes = service.executar()
+
+    return jsonify(questoes), 200
+
+
+@questao_bp.get("/<int:id>")
+def buscar(id):
+    service = BuscarQuestaoPorIdService()
+    questao = service.executar(id)
+
+    if questao is None:
+        return jsonify({"erro": "Questão não encontrada."}), 404
+
+    return jsonify(questao), 200
+
+
+@questao_bp.post("/")
+@admin_obrigatorio
 def cadastrar():
-    if request.method == "GET":
-        categorias = Categoria.query.all() 
-        return render_template("questao/cadastrar.html", categorias=categorias)
-    
-    enunciado = request.form.get("enunciado")
-    categoria_id = request.form.get("categoria_id")
-    
-    service = CadastrarQuestaoService()
     try:
-        service.executar(enunciado, categoria_id)
-        return redirect(url_for("questao.listar"))
-    except ValueError as e:
-        categorias = Categoria.query.all()
-        return render_template("questao/cadastrar.html", erro=str(e), categorias=categorias)
+        dados = request.get_json() or {}
+        service = CadastrarQuestaoService()
+        questao = service.executar(dados.get("enunciado"), dados.get("categoria_id"))
+        return jsonify(questao), 201
 
-@questao_bp.route("/<int:id>/editar", methods=["GET", "POST"])
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao salvar questão no banco de dados."}), 500
+
+
+@questao_bp.put("/<int:id>")
+@admin_obrigatorio
 def editar(id):
-    if request.method == "GET":
-        questao = Questao.query.get(id)
-        categorias = Categoria.query.all()
-        return render_template("questao/editar.html", questao=questao, categorias=categorias)
-
-    enunciado = request.form.get("enunciado")
-    categoria_id = request.form.get("categoria_id")
-    
-    service = EditarQuestaoService()
     try:
-        service.executar(id, enunciado, categoria_id)
-        return redirect(url_for("questao.listar"))
-    except ValueError as e:
-        questao = Questao.query.get(id)
-        categorias = Categoria.query.all()
-        return render_template("questao/editar.html", questao=questao, categorias=categorias, erro=str(e))
-    
-@questao_bp.route("/<int:id>/deletar", methods=["POST"])
-def deletar(id):
-    service = DeletarQuestaoService()
-    service.executar(id)
-    return redirect(url_for("questao.listar"))
+        dados = request.get_json() or {}
+        service = EditarQuestaoService()
+        questao = service.executar(id, dados.get("enunciado"), dados.get("categoria_id"))
+        return jsonify(questao), 200
 
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao atualizar questão no banco de dados."}), 500
+
+
+@questao_bp.delete("/<int:id>")
+@admin_obrigatorio
+def deletar(id):
+    try:
+        service = DeletarQuestaoService()
+        service.executar(id)
+        return "", 204
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao deletar questão no banco de dados."}), 500

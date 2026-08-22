@@ -1,9 +1,11 @@
-from models import db, Usuario
+from models import Usuario
+
 
 class DeletarUsuarioService:
     def executar(self, usuario_id):
-        usuario = Usuario.query.get(usuario_id)
-        if not usuario:
-            raise ValueError("Usuario não encontrado.")
-        db.session.delete(usuario)
-        db.session.commit()
+        usuario = Usuario.buscar_por_id(usuario_id)
+        if usuario is None:
+            raise ValueError("Usuário não encontrado.")
+
+        usuario.deletar()
+        return True

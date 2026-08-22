@@ -1,9 +1,11 @@
-from models import db, Alternativa
+from models import Alternativa
+
 
 class DeletarAlternativaService:
     def executar(self, alternativa_id):
-        alternativa = Alternativa.query.get(alternativa_id)
-        if not alternativa:
+        alternativa = Alternativa.buscar_por_id(alternativa_id)
+        if alternativa is None:
             raise ValueError("Alternativa não encontrada.")
-        db.session.delete(alternativa)
-        db.session.commit()
+
+        alternativa.deletar()
+        return True

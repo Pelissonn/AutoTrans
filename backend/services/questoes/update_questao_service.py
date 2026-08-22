@@ -1,17 +1,17 @@
-from models import db, Questao, Categoria
+from models import Categoria, Questao
+
+
 class EditarQuestaoService:
-    def executar(self, questao_id, enunciado=None, categoria_id=None):
-        questao = Questao.query.get(questao_id)
-        if not questao:
+    def executar(self, questao_id, enunciado, categoria_id):
+        questao = Questao.buscar_por_id(questao_id)
+        if questao is None:
             raise ValueError("Questão não encontrada.")
-        
-        if enunciado is not None:
-            questao.enunciado = enunciado
-        
-        if categoria_id is not None:
-            categoria = Categoria.query.get(categoria_id)
-            if not categoria:
-                raise ValueError("Categoria não encontrada.")
-            questao.categoria_id = categoria_id
-        
-        db.session.commit()
+
+        if not enunciado:
+            raise ValueError("O enunciado é obrigatório.")
+
+        if categoria_id and Categoria.buscar_por_id(categoria_id) is None:
+            raise ValueError("Categoria não encontrada.")
+
+        questao.atualizar(enunciado=enunciado, categoria_id=categoria_id)
+        return questao.to_dict()
