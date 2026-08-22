@@ -1,9 +1,11 @@
-from models import db, Material
+from models import Material
+
 
 class DeletarMaterialService:
     def executar(self, material_id):
-        material = Material.query.get(material_id)
-        if not material:
+        material = Material.buscar_por_id(material_id)
+        if material is None:
             raise ValueError("Material não encontrado.")
-        db.session.delete(material)
-        db.session.commit()
+
+        material.deletar()
+        return True

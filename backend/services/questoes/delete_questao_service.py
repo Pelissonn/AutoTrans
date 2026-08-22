@@ -1,9 +1,11 @@
-from models import db, Questao
+from models import Questao
+
 
 class DeletarQuestaoService:
     def executar(self, questao_id):
-        questao = Questao.query.get(questao_id)
-        if not questao:
+        questao = Questao.buscar_por_id(questao_id)
+        if questao is None:
             raise ValueError("Questão não encontrada.")
-        db.session.delete(questao)
-        db.session.commit()
+
+        questao.deletar()
+        return True

@@ -1,9 +1,11 @@
-from models import db, Categoria
+from models import Categoria
+
 
 class DeletarCategoriaService:
     def executar(self, categoria_id):
-        categoria = Categoria.query.get(categoria_id)
-        if not categoria:
+        categoria = Categoria.buscar_por_id(categoria_id)
+        if categoria is None:
             raise ValueError("Categoria não encontrada.")
-        db.session.delete(categoria)
-        db.session.commit()
+
+        categoria.deletar()
+        return True

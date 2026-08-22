@@ -1,58 +1,92 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from models import Alternativa, Questao
+from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
+
+from auth_utils import admin_obrigatorio
+from models import db
 from services.alternativas.create_alternativa_service import CadastrarAlternativaService
-from services.alternativas.read_alternativa_service import ListarAlternativasService
-from services.alternativas.update_alternativa_service import AtualizarAlternativaService
+from services.alternativas.read_alternativa_service import (
+    BuscarAlternativaPorIdService,
+    ListarAlternativasPorQuestaoService,
+    ListarAlternativasService,
+)
+from services.alternativas.update_alternativa_service import EditarAlternativaService
 from services.alternativas.delete_alternativa_service import DeletarAlternativaService
 
-alternativa_bp = Blueprint('alternativa', __name__, url_prefix="/alternativas")
+alternativa_bp = Blueprint("alternativa", __name__, url_prefix="/alternativas")
 
-@alternativa_bp.route("/")
+
+@alternativa_bp.get("/")
 def listar():
-    service = ListarAlternativasService()
-    alternativas = service.executar()
-    return render_template("alternativa/listar.html", alternativas=alternativas)
+    questao_id = request.args.get("questao_id")
 
-@alternativa_bp.route("/cadastrar", methods=["GET", "POST"])
+    if questao_id:
+        service = ListarAlternativasPorQuestaoService()
+        alternativas = service.executar(questao_id)
+    else:
+        service = ListarAlternativasService()
+        alternativas = service.executar()
+
+    return jsonify(alternativas), 200
+
+
+@alternativa_bp.get("/<int:id>")
+def buscar(id):
+    service = BuscarAlternativaPorIdService()
+    alternativa = service.executar(id)
+
+    if alternativa is None:
+        return jsonify({"erro": "Alternativa não encontrada."}), 404
+
+    return jsonify(alternativa), 200
+
+
+@alternativa_bp.post("/")
+@admin_obrigatorio
 def cadastrar():
-    if request.method == "GET":
-        questoes = Questao.query.all()
-        return render_template("alternativa/cadastrar.html", questoes=questoes)
-    
-    texto = request.form.get("texto")
-    correta = request.form.get("correta") == "true"
-    questao_id = request.form.get("questao_id")
-    
-    service = CadastrarAlternativaService()
     try:
-        service.executar(texto, correta, questao_id)
-        return redirect(url_for("alternativa.listar"))
-    except ValueError as e:
-        questoes = Questao.query.all()
-        return render_template("alternativa/cadastrar.html", erro=str(e), questoes=questoes)
-    
-@alternativa_bp.route("/<int:id>/editar", methods=["GET", "POST"])
-def editar(id):
-    if request.method == "GET":
-        alternativa = Alternativa.query.get(id)
-        questoes = Questao.query.all()
-        return render_template("alternativa/editar.html", alternativa=alternativa, questoes=questoes)
+        dados = request.get_json() or {}
+        service = CadastrarAlternativaService()
+        alternativa = service.executar(
+            dados.get("questao_id"), dados.get("texto"), dados.get("correta", False)
+        )
+        return jsonify(alternativa), 201
 
-    texto = request.form.get("texto")
-    correta = request.form.get("correta") == "true"
-    questao_id = request.form.get("questao_id")
-    
-    service = AtualizarAlternativaService()
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao salvar alternativa no banco de dados."}), 500
+
+
+@alternativa_bp.put("/<int:id>")
+@admin_obrigatorio
+def editar(id):
     try:
-        service.executar(id, texto, correta, questao_id)
-        return redirect(url_for("alternativa.listar"))
-    except ValueError as e:
-        alternativa = Alternativa.query.get(id)
-        questoes = Questao.query.all()
-        return render_template("alternativa/editar.html", alternativa=alternativa, questoes=questoes, erro=str(e))
-    
-@alternativa_bp.route("/<int:id>/deletar", methods=["POST"])
+        dados = request.get_json() or {}
+        service = EditarAlternativaService()
+        alternativa = service.executar(id, dados.get("texto"), dados.get("correta"))
+        return jsonify(alternativa), 200
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao atualizar alternativa no banco de dados."}), 500
+
+
+@alternativa_bp.delete("/<int:id>")
+@admin_obrigatorio
 def deletar(id):
-    service = DeletarAlternativaService()
-    service.executar(id)
-    return redirect(url_for("alternativa.listar"))
+    try:
+        service = DeletarAlternativaService()
+        service.executar(id)
+        return "", 204
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao deletar alternativa no banco de dados."}), 500

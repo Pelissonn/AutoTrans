@@ -1,19 +1,14 @@
-from models import db, Material, Categoria
+from models import Material
+
 
 class EditarMaterialService:
-    def executar(self, material_id, conteudo=None, url=None, categoria_id=None):
-        material = Material.query.get(material_id)
-        if not material:
+    def executar(self, material_id, conteudo, url):
+        material = Material.buscar_por_id(material_id)
+        if material is None:
             raise ValueError("Material não encontrado.")
-        
-        if conteudo:
-            material.conteudo = conteudo
-        if url:
-            material.url = url
-        if categoria_id:
-            categoria = Categoria.query.get(categoria_id)
-            if not categoria:
-                raise ValueError("Categoria não encontrada.")
-            material.categoria = categoria
-        
-        db.session.commit()
+
+        if not conteudo:
+            raise ValueError("O conteúdo é obrigatório.")
+
+        material.atualizar(conteudo=conteudo, url=url)
+        return material.to_dict()

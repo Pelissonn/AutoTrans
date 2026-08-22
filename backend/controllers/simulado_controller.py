@@ -1,59 +1,79 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
 
-from models import Categoria, ItemSimulado, Resultado, Simulado, Usuario, db
+from auth_utils import login_obrigatorio
+from models import db
+from services.simulados.iniciar_simulado_service import IniciarSimuladoService
+from services.simulados.buscar_simulado_service import BuscarSimuladoService
+from services.simulados.finalizar_simulado_service import FinalizarSimuladoService
+from services.simulados.consultar_historico_service import ConsultarHistoricoSimuladosService
 
-simulado_bp = Blueprint("simulado", __name__, url_prefix="/simulado")
-
-
-@simulado_bp.route("/categoria/<int:categoria_id>/iniciar")
-def iniciar(categoria_id):
-    categoria = Categoria.query.get(categoria_id)
-    usuario = Usuario.obter_padrao()
-
-    simulado = Simulado(
-        usuario_id=usuario.id,
-        categoria_id=categoria.id,
-        titulo=f"Simulado - {categoria.nome}",
-    )
-    db.session.add(simulado)
-    db.session.commit()
-
-    for questao in categoria.questoes:
-        db.session.add(ItemSimulado(simulado_id=simulado.id, questao_id=questao.id))
-    db.session.commit()
-
-    return redirect(url_for("simulado.responder", simulado_id=simulado.id))
+simulado_bp = Blueprint("simulado", __name__, url_prefix="/simulados")
 
 
-@simulado_bp.route("/<int:simulado_id>")
-def responder(simulado_id):
-    simulado = Simulado.buscar_por_id(simulado_id)
-    return render_template("simulado/responder.html", simulado=simulado)
+@simulado_bp.get("/historico")
+@login_obrigatorio
+def historico():
+    """
+    Lista os simulados já finalizados do usuário logado, com estatísticas
+    (média, melhor e pior nota). A consulta complexa (join Simulado+Resultado)
+    fica no Repository — este controller só chama o Service.
+    """
+    service = ConsultarHistoricoSimuladosService()
+    resultado = service.executar(request.usuario_id)
+    return jsonify(resultado), 200
 
 
-@simulado_bp.route("/<int:simulado_id>/finalizar", methods=["POST"])
-def finalizar(simulado_id):
-    simulado = Simulado.buscar_por_id(simulado_id)
+@simulado_bp.get("/<int:id>")
+@login_obrigatorio
+def buscar(id):
+    try:
+        service = BuscarSimuladoService()
+        simulado = service.executar(id, request.usuario_id)
 
-    for item in simulado.itens:
-        alternativa_id = request.form.get(f"item_{item.id}")
-        if alternativa_id:
-            item.alternativa_escolhida_id = int(alternativa_id)
-        item.verificar()
-    db.session.commit()
+        if simulado is None:
+            return jsonify({"erro": "Simulado não encontrado."}), 404
 
-    resultado = Resultado(simulado_id=simulado.id, nota=simulado.calcular_pontuacao())
-    db.session.add(resultado)
-    db.session.commit()
+        return jsonify(simulado), 200
 
-    return redirect(url_for("simulado.resultado", simulado_id=simulado.id))
+    except PermissionError as erro:
+        return jsonify({"erro": str(erro)}), 403
 
 
-@simulado_bp.route("/<int:simulado_id>/resultado")
-def resultado(simulado_id):
-    simulado = Simulado.buscar_por_id(simulado_id)
-    resultado = Resultado.buscar_por_simulado(simulado_id)
-    aprovado = resultado.nota >= simulado.pontuacao_max * 0.7
-    return render_template(
-        "simulado/resultado.html", simulado=simulado, resultado=resultado, aprovado=aprovado
-    )
+@simulado_bp.post("/")
+@login_obrigatorio
+def iniciar():
+    try:
+        dados = request.get_json() or {}
+        service = IniciarSimuladoService()
+        # usuario_id vem do token (usuário logado), nunca do corpo da requisição —
+        # assim ninguém consegue criar um simulado "em nome" de outra pessoa.
+        simulado = service.executar(request.usuario_id, dados.get("categoria_id"))
+        return jsonify(simulado), 201
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao criar simulado no banco de dados."}), 500
+
+
+@simulado_bp.post("/<int:id>/finalizar")
+@login_obrigatorio
+def finalizar(id):
+    try:
+        dados = request.get_json() or {}
+        service = FinalizarSimuladoService()
+        simulado = service.executar(id, dados.get("respostas", []), request.usuario_id)
+        return jsonify(simulado), 200
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except PermissionError as erro:
+        return jsonify({"erro": str(erro)}), 403
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao finalizar simulado no banco de dados."}), 500
