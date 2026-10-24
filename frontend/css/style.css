@@ -227,7 +227,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 /* --- Mobile (≤ 768px): hamburger toggle --- */
 @media (max-width: 768px) {
-    body.app-body .sidebar { left: -220px; transition: left 0.25s ease; }
+    body.app-body .sidebar { display: flex; left: -220px; transition: left 0.25s ease; }
     .menu-toggle:checked ~ .sidebar { left: 0; }
     .menu-toggle:checked ~ .sidebar-overlay { display: block; }
     body.app-body .hamburger { display: flex; }
@@ -281,3 +281,28 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 .conteudo-pagina p#mensagem { text-align: left; font-weight: 600; }
 .conteudo-pagina a { color: var(--link-color); text-decoration: underline; cursor: pointer; }
+
+/* =============================================
+   Novas telas: gabarito, caderno de erros, favoritos e busca
+   ============================================= */
+.item-questao { text-align: left; margin-bottom: 15px; }
+.item-questao .categoria-tag { font-size: 12px; font-weight: 600; color: var(--btn-green); text-align: left; margin-bottom: 8px; }
+.item-questao .enunciado { font-size: 14px; font-weight: 600; color: var(--text-primary); text-align: left; margin-bottom: 10px; }
+.item-questao .alt { font-size: 13px; text-align: left; margin-bottom: 6px; padding: 6px 8px; border-radius: 8px; color: var(--text-primary); }
+.item-questao .alt-certa { background-color: rgba(56, 161, 105, 0.15); border: 1px solid var(--btn-green); }
+.item-questao .alt-errada { background-color: rgba(229, 62, 62, 0.1); border: 1px solid #e53e3e; }
+
+.btn-pequeno { padding: 8px 14px; border-radius: 15px; border: none; background-color: var(--input-bg); color: var(--text-primary); font-weight: 600; font-size: 12px; cursor: pointer; margin-top: 8px; }
+.btn-pequeno:disabled { opacity: 0.6; cursor: default; }
+.btn-remover { background-color: rgba(229, 62, 62, 0.1); color: #e53e3e; border: 1px solid #e53e3e; }
+
+.explicacao-ia { font-size: 13px; text-align: left; margin-top: 8px; color: var(--text-primary); white-space: pre-line; }
+.explicacao-ia:empty { display: none; }
+
+.termos-aceite { display: flex; gap: 10px; align-items: flex-start; width: 100%; font-size: 13px; text-align: left; margin: 5px 0 15px; color: var(--text-primary); }
+.termos-aceite input { width: auto; margin-top: 3px; }
+.termos-aceite a { color: var(--btn-green); font-weight: 600; }
+
+.pagina-termos { text-align: left; padding: 30px 25px; }
+.pagina-termos h3 { margin-top: 20px; text-align: left; }
+.pagina-termos p, .pagina-termos li { font-size: 14px; text-align: left; color: var(--text-primary); line-height: 1.5; }

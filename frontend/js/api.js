@@ -56,3 +56,13 @@ function removerToken() {
 function estaLogado() {
     return !!obterToken();
 }
+
+// ==========================================
+// Utilitário: evita que texto vindo do banco (ex.: enunciado de questão)
+// seja interpretado como HTML quando colocado em innerHTML.
+// ==========================================
+function escaparHtml(texto) {
+    const div = document.createElement("div");
+    div.textContent = texto == null ? "" : String(texto);
+    return div.innerHTML;
+}

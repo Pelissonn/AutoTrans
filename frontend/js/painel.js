@@ -111,20 +111,28 @@ async function carregarTrilhas() {
             return;
         }
 
+        // Progresso real do aluno em cada categoria (GET /progresso/)
+        const progresso = await obterProgressoPorCategoria();
+
         lista.innerHTML = "";
         categorias.forEach((categoria) => {
+            const p = progresso[categoria.id];
+            const percentual = p ? p.percentual : 0;
+            const acertadas = p ? p.questoes_acertadas : 0;
+
             const div = document.createElement("div");
             div.className = "trail-card";
             div.onclick = () => iniciarSimulado(categoria.id);
             div.innerHTML = `
                 <div class="trail-info">
-                    <h4>${categoria.nome}</h4>
-                    <p>${categoria.total_questoes} questões</p>
+                    <h4>${escaparHtml(categoria.nome)}</h4>
+                    <p>${acertadas}/${categoria.total_questoes} questões dominadas (${percentual}%)</p>
                 </div>
-                <div class="progress-bg"><div class="progress-fill" style="width: 0%;"></div></div>
+                <div class="progress-bg"><div class="progress-fill" data-progresso="${percentual}%" style="width: 0%;"></div></div>
             `;
             lista.appendChild(div);
         });
+        animarBarrasDeProgresso();
     } catch (erro) {
         lista.innerHTML = `<p style="color:#e53e3e;">${erro.message}</p>`;
     }
@@ -301,6 +309,7 @@ async function verDetalhesSimulado(simuladoId) {
             <p><strong>Data:</strong> ${data}</p>
             <p><strong>Nota:</strong> ${sim.resultado ? sim.resultado.nota : "-"} / ${sim.pontuacao_max}</p>
             <p><strong>Questões respondidas:</strong> ${sim.itens.length}</p>
+            ${sim.resultado ? `<button class="btn" style="margin-top: 15px;" onclick="verGabarito(${sim.id})">Ver gabarito</button>` : ""}
         `;
     } catch (erro) {
         if (erro.message.includes("permissão")) {
@@ -328,4 +337,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     await carregarUsuario();
     await carregarTrilhas();
     await carregarHistorico();
+    await carregarSequencia();
 });

@@ -1,92 +1,60 @@
-from flask import Blueprint, jsonify, request
-from sqlalchemy.exc import SQLAlchemyError
+from flask import Blueprint, request
 
-from auth_utils import admin_obrigatorio
-from models import db
-from services.alternativas.create_alternativa_service import CadastrarAlternativaService
-from services.alternativas.read_alternativa_service import (
-    BuscarAlternativaPorIdService,
+from controllers.base_controller import ERROS_DE_NEGOCIO, BaseController
+from services.alternativas import (
+    BuscarAlternativaService,
+    CadastrarAlternativaService,
+    EditarAlternativaService,
+    ExcluirAlternativaService,
     ListarAlternativasPorQuestaoService,
     ListarAlternativasService,
 )
-from services.alternativas.update_alternativa_service import EditarAlternativaService
-from services.alternativas.delete_alternativa_service import DeletarAlternativaService
+from utils.auth import admin_obrigatorio
 
 alternativa_bp = Blueprint("alternativa", __name__, url_prefix="/alternativas")
 
 
-@alternativa_bp.get("/")
-def listar():
-    questao_id = request.args.get("questao_id")
+class AlternativaController(BaseController):
+    """Alternativas: leitura pública (com filtro ?questao_id=), escrita só administrador."""
 
-    if questao_id:
-        service = ListarAlternativasPorQuestaoService()
-        alternativas = service.executar(questao_id)
-    else:
-        service = ListarAlternativasService()
-        alternativas = service.executar()
+    def get(self, id=None):
+        try:
+            if id is not None:
+                return self.responder(BuscarAlternativaService().executar(id))
 
-    return jsonify(alternativas), 200
+            questao_id = request.args.get("questao_id", type=int)
+            if questao_id:
+                return self.responder(ListarAlternativasPorQuestaoService().executar(questao_id))
+            return self.responder(ListarAlternativasService().executar())
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
+    @admin_obrigatorio
+    def post(self):
+        dados = self.dados_json()
+        try:
+            alternativa = CadastrarAlternativaService().executar(
+                dados.get("questao_id"), dados.get("texto"), dados.get("correta", False)
+            )
+            return self.responder(alternativa, 201)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
-@alternativa_bp.get("/<int:id>")
-def buscar(id):
-    service = BuscarAlternativaPorIdService()
-    alternativa = service.executar(id)
+    @admin_obrigatorio
+    def put(self, id):
+        dados = self.dados_json()
+        try:
+            alternativa = EditarAlternativaService().executar(id, dados.get("texto"), dados.get("correta"))
+            return self.responder(alternativa)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
-    if alternativa is None:
-        return jsonify({"erro": "Alternativa não encontrada."}), 404
-
-    return jsonify(alternativa), 200
-
-
-@alternativa_bp.post("/")
-@admin_obrigatorio
-def cadastrar():
-    try:
-        dados = request.get_json() or {}
-        service = CadastrarAlternativaService()
-        alternativa = service.executar(
-            dados.get("questao_id"), dados.get("texto"), dados.get("correta", False)
-        )
-        return jsonify(alternativa), 201
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao salvar alternativa no banco de dados."}), 500
-
-
-@alternativa_bp.put("/<int:id>")
-@admin_obrigatorio
-def editar(id):
-    try:
-        dados = request.get_json() or {}
-        service = EditarAlternativaService()
-        alternativa = service.executar(id, dados.get("texto"), dados.get("correta"))
-        return jsonify(alternativa), 200
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao atualizar alternativa no banco de dados."}), 500
+    @admin_obrigatorio
+    def delete(self, id):
+        try:
+            return self.responder(ExcluirAlternativaService().executar(id))
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
 
-@alternativa_bp.delete("/<int:id>")
-@admin_obrigatorio
-def deletar(id):
-    try:
-        service = DeletarAlternativaService()
-        service.executar(id)
-        return "", 204
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao deletar alternativa no banco de dados."}), 500
+AlternativaController.registrar_crud(alternativa_bp, "alternativa_api")

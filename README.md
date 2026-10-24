@@ -1,315 +1,352 @@
 # AutoTrans
 
-Aplicacao web de estudos para a prova teorica de direcao (CNH), no estilo
-Duolingo: o aluno escolhe uma categoria, estuda o material e faz simulados
-com questoes de multipla escolha.
+Plataforma web de estudos para a prova teórica da CNH, no estilo Duolingo:
+o aluno estuda o material de cada categoria, faz simulados com correção
+automática, acompanha a própria evolução e compete no ranking.
 
-Projeto escolar em Flask (API) + HTML/CSS/JS puro (frontend), com
-arquitetura Controller -> Service -> Model/Repository -> Banco de Dados.
+Projeto em **Flask (API REST)** + **HTML/CSS/JavaScript puro (frontend)**,
+com arquitetura em camadas:
+
+```
+Interface/Tela → API Flask → Controller → Service → Model / Repository → Banco de Dados
+```
+
+---
+
+## Descrição, público-alvo e problema resolvido
+
+**Descrição.** O AutoTrans reúne o conteúdo de estudo da prova teórica da CNH
+organizado por categoria (Legislação, Sinalização, Direção Defensiva,
+Primeiros Socorros e Mecânica Básica), um banco de questões de múltipla
+escolha e simulados que corrigem as respostas na hora, guardam o histórico
+e mostram o progresso do aluno. Administradores mantêm o conteúdo e
+acompanham um relatório geral da plataforma.
+
+**Público-alvo.** Candidatos à primeira habilitação (e quem precisa refazer a
+prova teórica), principalmente jovens que estudam pelo computador ou celular.
+
+**Problema resolvido.** O estudo costuma ser feito com apostilas longas e
+simulados soltos, sem correção imediata nem acompanhamento. O AutoTrans
+oferece estudo por categoria, simulados com nota automática, gabarito
+comentado (inclusive por IA), caderno de erros e um histórico que mostra se o
+aluno está melhorando.
+
+---
+
+## Casos de uso principais (com telas)
+
+| # | Caso de uso | Tela | Endpoint | Caminho pelas camadas |
+|---|---|---|---|---|
+| 1 | Fazer um simulado com correção automática | `painel.html` (Trilhas → Quiz → Resultado) | `POST /simulados/`, `POST /simulados/<id>/finalizar` | `SimuladoController` → `IniciarSimuladoService` (usa `QuestaoRepository`) / `FinalizarSimuladoService` → Models `Simulado`, `ItemSimulado`, `Resultado` |
+| 2 | Consultar histórico e estatísticas | `painel.html` (Meu Histórico) | `GET /simulados/historico` | `HistoricoSimuladoController` → `ConsultarHistoricoService` → `SimuladoRepository` (SQL com JOIN e AVG/MAX/MIN) |
+| 3 | Ranking dos alunos | `painel.html` (Ranking) | `GET /ranking/` | `RankingController` → `ConsultarRankingService` → `RankingRepository` (SQL com GROUP BY) |
+| 4 | Caderno de erros | `painel.html` (Caderno de Erros) | `GET /questoes/erradas` | `CadernoErrosController` → `ListarQuestoesErradasService` → `QuestaoRepository` |
+| 5 | Relatório geral (administrador) | `admin_relatorio.html` | `GET /relatorios/geral` | `RelatorioGeralController` → `GerarRelatorioGeralService` → `RelatorioRepository` |
+
+Fluxogramas desses casos de uso (passo a passo pelas camadas, incluindo o
+Repository): [`docs/fluxogramas.md`](docs/fluxogramas.md).
+Roteiro do vídeo de demonstração: [`docs/roteiro_video.md`](docs/roteiro_video.md).
 
 ---
 
 ## Funcionalidades Implementadas
 
-1. Cadastro, login e autenticacao de alunos, com senha protegida por hash
-   e token de acesso
-2. Cadastro de categorias, questoes e alternativas de simulado (banco de
-   questoes) - restrito a administradores
-3. Cadastro de materiais de estudo, organizados por categoria - restrito
-   a administradores
-4. Geracao de simulados com correcao automatica, calculando a nota do
-   aluno
-5. Edicao e exclusao de dados de usuario - restrito a administradores
-6. Edicao e exclusao de categorias, questoes e alternativas - restrito a
-   administradores
-7. Edicao e exclusao de materiais de estudo - restrito a administradores
-8. Edicao do proprio perfil pelo usuario logado (nome, foto, senha) e
-   exclusao da propria conta (PUT/DELETE /auth/me)
-9. Consulta do historico de simulados e estatisticas de evolucao (media,
-   melhor e pior nota), usando um Repository para a consulta complexa
-   (join Simulado + Resultado)
-10. Garantia de que cada aluno so acessa os proprios simulados: ao abrir
-    os detalhes de um simulado que nao seja seu (ex.: id manipulado), o
-    sistema exibe uma tela de "Acesso negado" em vez dos dados de outro
-    usuario (GET /simulados/<id> retorna 403 e o frontend mostra essa
-    tela dedicada)
+Todas estão implementadas de ponta a ponta (Tela → API Flask → Controller →
+Service → Model/Repository → Banco de Dados).
 
-Cada funcionalidade acima esta implementada de ponta a ponta: Interface
--> API Flask -> Controller -> Service -> Model/Repository -> Banco de
-Dados.
+**Conta e acesso**
 
----
+1. Criar conta de aluno com aceite dos Termos de Uso (decisão registrada no banco)
+2. Fazer login (senha com hash e token de acesso)
+3. Visualizar o próprio perfil
+4. Editar o próprio perfil (nome, foto e senha)
+5. Excluir a própria conta (apaga também o histórico)
 
-## Tecnologias
+**Estudo e simulados**
 
-- Python 3 + Flask - API REST (so jsonify, sem Jinja/render_template)
-- Flask-SQLAlchemy - ORM (banco SQLite)
-- Flask-CORS - libera o frontend (outra origem) a chamar a API
-- Werkzeug (werkzeug.security) - hash de senha
-- itsdangerous - geracao e validacao do token de autenticacao
-- HTML / CSS / JavaScript puro - frontend estatico, consome a API via fetch()
+6. Iniciar simulado por categoria (sorteio de até 10 questões)
+7. Finalizar simulado com correção automática e cálculo da nota
+8. Consultar histórico de simulados com estatísticas (média, melhor e pior nota)
+9. Ver os detalhes de um simulado (bloqueado para simulados de outro aluno)
+10. Ver o gabarito do simulado (resposta marcada × correta)
+11. Explicar uma questão com Inteligência Artificial (Google Gemini)
+12. Estudar os materiais de uma categoria
+13. Buscar questões por palavra-chave
+14. Caderno de erros (questões que o aluno mais errou)
+15. Favoritar questão
+16. Listar questões favoritas
+17. Remover questão dos favoritos
+18. Progresso por categoria (% de questões dominadas em cada trilha)
+19. Sequência de dias de estudo (🔥 streak)
+20. Ranking dos alunos pela média das notas
+
+**Administração** (somente administrador)
+
+21. Relatório geral da plataforma (totais, desempenho e aprovação por categoria, questões mais erradas)
+22. Cadastrar usuário
+23. Listar usuários
+24. Editar usuário (inclusive tornar administrador)
+25. Excluir usuário
+26. Cadastrar categoria
+27. Listar categorias
+28. Editar categoria
+29. Excluir categoria (bloqueada se já houver simulados nela)
+30. Cadastrar questão
+31. Listar questões (com filtro por categoria)
+32. Editar questão
+33. Excluir questão (bloqueada se já foi respondida em simulado)
+34. Cadastrar alternativa (cada questão aceita só uma correta)
+35. Listar alternativas (com filtro por questão)
+36. Editar alternativa
+37. Excluir alternativa (bloqueada se já foi escolhida em simulado)
+38. Cadastrar material de estudo
+39. Listar materiais (com filtro por categoria)
+40. Editar material
+41. Excluir material
+42. Importar questões, alternativas e categorias em lote por arquivo JSON (não duplica)
 
 ---
 
 ## Arquitetura
 
-O backend e o frontend sao duas coisas separadas que rodam de forma
-independente. O backend nao serve HTML nenhum: so devolve JSON. O
-frontend e um conjunto de arquivos estaticos que qualquer navegador abre
-direto, e que fala com o backend via fetch().
+O backend e o frontend são **duas aplicações separadas**, executadas em
+servidores diferentes. O backend não serve HTML: só devolve JSON. O frontend
+é um conjunto de arquivos estáticos que fala com a API apenas por `fetch`
+(`frontend/js/api.js`).
 
 ```
-Backend (Flask, porta 5000)  <----  fetch()  ---->  Frontend (arquivos estaticos)
-        API JSON                                     HTML + CSS + JS puro
+  Frontend (porta 5500)                       Backend / API (porta 5000)
+  HTML + CSS + JavaScript   --- fetch --->    Flask → Controller → Service → Model/Repository → SQLite/MySQL
+  python -m http.server 5500                  python app.py
 ```
 
-### Padrao das camadas (backend)
+### Camadas do backend
 
-```
-Controller  ->  Service  ->  Model / Repository  ->  Banco de dados
- (rota,         (regra de     Model: CRUD simples
-  jsonify)       negocio,     (salvar(), atualizar(), deletar(),
-                 validacao)   listar_todos(), buscar_por_id())
+- **Controllers** (`backend/controllers/`): classes (`flask.views.MethodView`)
+  ligadas a um recurso (`CategoriaController`, `QuestaoController`,
+  `SimuladoController`...). Recebem a requisição, leem os dados, chamam o
+  Service e devolvem o JSON com o status HTTP. Não têm regra de negócio.
+  Todas herdam de `BaseController`, que traduz os erros dos Services em
+  400/403/404/503.
+- **Services** (`backend/services/`): **uma classe por caso de uso, um arquivo
+  por classe** (ex.: `CadastrarQuestaoService`, `FinalizarSimuladoService`,
+  `ConsultarRankingService`). Validam os dados e coordenam o caso de uso
+  chamando Models e Repositories. A integração com a IA fica isolada no
+  `services/ia/gemini_service.py`.
+- **Models** (`backend/models/`): entidades do domínio. Herdam de
+  `ModeloBase` (`db.Model`), que concentra o CRUD com ORM: `salvar()`,
+  `atualizar()`, `deletar()`, `listar_todos()` e `buscar_por_id()`.
+- **Repositories** (`backend/repositories/`): consultas especiais **escritas
+  em SQL** (`SELECT`, `JOIN`, `GROUP BY`, `COUNT/AVG/MAX/MIN`, `LIKE`), com
+  parâmetros nomeados (`:usuario_id`) para evitar SQL Injection. Não repetem o
+  CRUD simples das Models. Controller e Service nunca escrevem SQL.
 
-                              Repository: consultas especiais
-                              (filtros, joins, relatorios, rankings)
-```
+| Repository | Consultas (SQL) | Usado por |
+|---|---|---|
+| `UsuarioRepository` | contar usuários; localizar usuário pelo e-mail | `RegistrarUsuarioService`, `LoginService`, `CadastrarUsuarioService`, `EditarUsuarioService` |
+| `CategoriaRepository` | localizar categoria pelo nome; contar simulados da categoria | cadastro/edição/exclusão de categoria, importação |
+| `QuestaoRepository` | filtro por categoria; busca por palavra (`LIKE`); caderno de erros (`JOIN` + `GROUP BY`); contar respostas | busca, caderno de erros, simulado, exclusão, importação |
+| `AlternativaRepository` | filtro por questão; contar respostas; contar corretas da questão | alternativas e montagem das questões |
+| `MaterialRepository` | materiais de uma categoria (`JOIN`) | `ListarMateriaisPorCategoriaService` |
+| `SimuladoRepository` | histórico do aluno (`JOIN` simulados + resultados + categorias); estatísticas (`AVG/MAX/MIN`) | `ConsultarHistoricoService` |
+| `FavoritoRepository` | questões favoritas do aluno; localizar favorito | favoritos |
+| `RankingRepository` | ranking (`AVG` por aluno, `ORDER BY`) | `ConsultarRankingService` |
+| `ProgressoRepository` | questões distintas acertadas por categoria; dias de estudo (`DISTINCT DATE`) | progresso e sequência |
+| `RelatorioRepository` | totais, desempenho por categoria, questões mais erradas | `GerarRelatorioGeralService` |
 
-Regras:
-- O Service nunca acessa `db.session` diretamente para CRUD simples. Ele
-  chama um metodo da Model (`categoria.salvar()`,
-  `Categoria.buscar_por_id(id)` etc.).
-- Repository so existe para consultas especiais que nao sao CRUD simples
-  (ex.: `HistoricoSimuladoRepository`, que junta Simulado + Resultado e
-  calcula estatisticas). Controller e Service nunca fazem essa consulta
-  direto - sempre passam pelo Repository.
-
----
-
-## Autenticacao e permissoes
-
-O login e real: senha com hash (nunca guardada em texto puro), token de
-autenticacao, e dois niveis de acesso (aluno comum e administrador).
-
-### Como funciona o login
-
-1. `POST /auth/registro` (nome, email, senha) cria o usuario com a senha
-   ja criptografada (werkzeug.security.generate_password_hash) e devolve
-   um token.
-2. `POST /auth/login` (email, senha) confere a senha
-   (check_password_hash) e devolve o mesmo tipo de token.
-3. O frontend guarda esse token no localStorage do navegador e manda ele
-   no cabecalho `Authorization: Bearer <token>` em toda chamada seguinte
-   (isso ja e feito automaticamente pelo js/api.js).
-4. Rotas protegidas usam o decorator `@login_obrigatorio` no backend: sem
-   um token valido, a API responde 401 Unauthorized.
-
-Por que token em vez de cookie/sessao do Flask: o frontend roda em uma
-origem separada do backend (Live Server em uma porta, API em outra), e
-cookies entre origens diferentes em localhost sao inconsistentes entre
-navegadores.
-
-### Aluno x Administrador
-
-- O **primeiro usuario cadastrado** no sistema vira administrador
-  automaticamente (`is_admin = True`), garantindo que sempre exista
-  alguem que possa gerenciar o banco de questoes e os usuarios sem
-  precisar mexer direto no banco de dados.
-- Cadastrar/editar/excluir categorias, questoes, alternativas, materiais
-  e usuarios exige administrador - protegido pelo decorator
-  `@admin_obrigatorio` no backend (retorna 403 para quem nao e admin).
-  As telas `admin_*.html` tambem verificam isso no frontend
-  (`js/admin-guard.js`) e redirecionam quem nao e admin, mas a protecao
-  de verdade e sempre a do backend.
-- Listar/ver categorias, questoes, alternativas e materiais continua
-  publico para qualquer aluno logado (precisa ver as trilhas e o
-  conteudo de estudo).
-- Ninguem consegue se autopromover a administrador editando o proprio
-  perfil (`PUT /auth/me` ignora o campo `is_admin` do corpo da
-  requisicao) - so um administrador pode tornar outro usuario admin,
-  pela tela de gestao de usuarios.
-
-### Perfil e seguranca por usuario
-
-- `GET /auth/me` e `PUT /auth/me` sempre agem sobre o usuario dono do
-  token - nunca sobre um id vindo da URL ou do corpo da requisicao,
-  entao ninguem consegue ver ou editar a conta de outra pessoa por essa
-  rota.
-- `DELETE /auth/me` exclui a propria conta do usuario logado.
-- Cada simulado so pode ser visto/finalizado pelo proprio usuario dono
-  dele - se o token for de outro usuario, a API responde 403 Forbidden e
-  o frontend mostra uma tela de "Acesso negado".
-
----
-
-## Estrutura do projeto
+### Estrutura de diretórios
 
 ```
 AutoTrans/
-|-- backend/
-|   |-- app.py                       -> cria a API Flask + CORS (sem Jinja)
-|   |-- auth_utils.py                -> token (login_obrigatorio) e permissao (admin_obrigatorio)
-|   |-- seed_questoes_reais.py       -> popula categorias/questoes/alternativas reais
-|   |-- seed_materiais_reais.py      -> popula materiais de estudo (com links oficiais)
-|   |-- requirements.txt
-|   |-- controllers/                 -> rotas (Blueprints), so devolvem JSON
-|   |   |-- auth_controller.py            -> registro, login, logout, me (GET/PUT/DELETE)
-|   |   |-- usuario_controller.py         -> CRUD restrito a admin
-|   |   |-- categoria_controller.py       -> leitura publica, escrita restrita a admin
-|   |   |-- questao_controller.py         -> leitura publica, escrita restrita a admin
-|   |   |-- alternativa_controller.py     -> leitura publica, escrita restrita a admin
-|   |   |-- material_controller.py        -> leitura publica, escrita restrita a admin
-|   |   `-- simulado_controller.py        -> inclui /simulados/historico
-|   |-- models/                      -> CRUD "Active Record" (1 arquivo por entidade)
-|   |   |-- base.py                  -> ModeloBase (so o id)
-|   |   |-- usuario.py               -> senha_hash, foto_url, is_admin
-|   |   |-- categoria.py, material.py, questao.py,
-|   |   |-- alternativa.py, simulado.py, item_simulado.py, resultado.py
-|   |-- services/                    -> 1 pasta por entidade, 1 classe por operacao
-|   |   |-- auth/  usuario/  categorias/  questoes/  alternativas/  materiais/
-|   |   `-- simulados/  (inclui consultar_historico_service.py)
-|   `-- repositories/                -> consultas especiais (joins, relatorios)
-|       `-- historico_simulado_repository.py
-|-- frontend/
-|   |-- index.html                   -> tela de boas-vindas / onboarding / login / cadastro
-|   |-- css/style.css
-|   |-- js/
-|   |   |-- api.js                    -> configuracao central da API + fetch() + token
-|   |   |-- script.js                 -> navegacao entre telas (SPA), modo escuro
-|   |   |-- auth.js                   -> cadastro/login reais
-|   |   |-- admin-guard.js            -> bloqueia telas admin_*.html para quem nao e admin
-|   |   |-- painel.js                 -> trilhas, quiz, historico, perfil (dados reais da API)
-|   |   |-- materiais.js
-|   |   `-- admin_*.js                -> 1 arquivo por CRUD de administracao
-|   `-- paginas/
-|       |-- painel.html               -> painel principal (trilhas, quiz, perfil, historico...)
-|       |-- materiais.html
-|       `-- admin_usuarios.html, admin_categorias.html, admin_questoes.html,
-|           admin_alternativas.html, admin_materiais.html
-|-- requirements.txt
-`-- README.md
+├── backend/
+│   ├── app.py                    → cria a API Flask, CORS e registra os blueprints
+│   ├── .env.example              → modelo das variáveis de ambiente (SECRET_KEY, GEMINI_API_KEY...)
+│   ├── controllers/              → base_controller + 1 arquivo por recurso
+│   ├── services/                 → 1 pasta por recurso, 1 arquivo por caso de uso
+│   │   ├── auth/  usuarios/  categorias/  materiais/  questoes/  alternativas/
+│   │   ├── simulados/  favoritos/  progresso/  ranking/  relatorios/
+│   │   ├── ia/gemini_service.py  → integração com a IA (API externa)
+│   │   └── excecoes.py           → erros de negócio (404, 503)
+│   ├── models/                   → base (CRUD) + 9 entidades
+│   ├── repositories/             → base_repository + 10 repositories com SQL
+│   ├── utils/                    → auth.py (token, login/admin obrigatório), datas.py
+│   ├── database/
+│   │   ├── create_database.sql   → tabelas para MySQL
+│   │   ├── popular_banco.py      → popula o banco com dados de demonstração
+│   │   ├── popular_banco.sql     → os mesmos dados em INSERT INTO (MySQL)
+│   │   ├── questoes_iniciais.json, materiais_iniciais.json
+│   └── instance/autotrans.db     → banco SQLite já populado
+├── frontend/
+│   ├── index.html                → boas-vindas, criar conta (com termos) e login
+│   ├── css/style.css
+│   ├── js/                       → api.js, auth.js, painel.js, gabarito.js, ranking.js, ...
+│   └── paginas/                  → painel, materiais, termos e admin_*
+├── README.md                     → este arquivo (único README do projeto)
+├── docs/
+│   ├── diagrama_classes.md (.mmd) → diagrama de classes do domínio
+│   ├── fluxogramas.md             → fluxogramas dos casos de uso
+│   └── roteiro_video.md           → roteiro do vídeo de demonstração
+└── requirements.txt
 ```
+
+---
+
+## Diagrama de classes
+
+O diagrama de classes do domínio (Models, atributos, herança, composição e
+agregação) está em [`docs/diagrama_classes.md`](docs/diagrama_classes.md)
+(fonte Mermaid em [`docs/diagrama_classes.mmd`](docs/diagrama_classes.mmd)).
+O GitHub renderiza o diagrama direto na página.
+
+---
+
+## Tecnologias
+
+- Python 3 + Flask: API REST (somente JSON)
+- Flask-SQLAlchemy: CRUD com ORM nas Models; conexão usada pelos Repositories para executar SQL escrito à mão
+- SQLite (padrão) ou MySQL (PyMySQL)
+- Flask-CORS: o frontend (porta 5500) chama a API (porta 5000)
+- Werkzeug: hash de senha · itsdangerous: token de acesso · python-dotenv: `.env`
+- Google Gemini (API REST): explicação das questões por IA
+- HTML, CSS e JavaScript puro no frontend (`fetch`)
 
 ---
 
 ## Como rodar
 
+São dois processos, cada um em um terminal.
+
 ### 1. Backend (API)
 
 ```bash
-git clone https://github.com/Pelissonn/AutoTrans.git
-cd AutoTrans
 pip install -r requirements.txt
 cd backend
+copy .env.example .env        # Linux/Mac: cp .env.example .env
 python app.py
 ```
 
-A API sobe em http://127.0.0.1:5000. Teste abrindo esse link no navegador
-- deve aparecer um JSON com a lista de rotas disponiveis.
+Edite o `backend/.env`: coloque uma chave em `SECRET_KEY`
+(`python -c "import secrets; print(secrets.token_urlsafe(32))"`) e, para a
+explicação por IA, a sua `GEMINI_API_KEY`
+([Google AI Studio](https://aistudio.google.com/)). Sem a chave do Gemini,
+todo o resto funciona e o botão de IA avisa que ela não está configurada.
+O modelo usado é definido em `GEMINI_MODEL` (padrão: `gemini-3.5-flash-lite`).
+O arquivo `.env` nunca vai para o GitHub (está no `.gitignore`); só o
+`.env.example`, sem chaves, fica no repositório.
 
-Importante: se voce ja tinha um banco criado antes de uma mudanca no
-schema (novo campo, nova tabela), apague `backend/autotrans.db` antes de
-rodar de novo - o SQLite nao adiciona colunas automaticamente.
+A API sobe em http://127.0.0.1:5000.
 
-### 2. Popular o banco com conteudo real
+### 2. Frontend (outro terminal)
 
-O banco comeca vazio. Rode os dois scripts abaixo (nessa ordem) para
-cadastrar categorias, questoes, alternativas e materiais de estudo reais:
+```bash
+cd frontend
+python -m http.server 5500
+```
+
+Abra http://127.0.0.1:5500 (ou use o Live Server do VS Code).
+
+### 3. Banco de dados
+
+O banco `backend/instance/autotrans.db` **já vem populado**. Para recriá-lo do zero:
 
 ```bash
 cd backend
-python seed_questoes_reais.py
-python seed_materiais_reais.py
+python database/popular_banco.py
 ```
 
-Rodar os scripts de novo nao duplica nada - eles pulam o que ja existe.
+Isso cria 6 usuários, 5 categorias, 50 questões (200 alternativas), 17
+materiais com links oficiais, 31 simulados finalizados nos últimos dias
+(alimentam histórico, ranking, progresso, sequência, caderno de erros e
+relatório) e 15 favoritos. Com `--gerar-sql` o script também gera
+`database/popular_banco.sql`.
 
-### 3. Frontend (arquivos estaticos)
+Logins do banco que está no repositório:
 
-O frontend nao precisa do Flask para rodar - e so abrir os arquivos .html
-da pasta frontend/ no navegador. Recomendado usar a extensao Live Server
-do VS Code:
+| Perfil | E-mail | Senha |
+|---|---|---|
+| Administrador | admin@autotrans.com | admin123 |
+| Alunos | artur@, davi@, clarice@, luanny@, gleison@autotrans.com | 1234 |
 
-1. Clique com o botao direito em frontend/index.html
-2. Escolha "Open with Live Server"
-3. O navegador abre em um endereco proprio (ex.: http://127.0.0.1:5500),
-   diferente da porta do backend
+(Se o banco for recriado pelo `popular_banco.py`, os alunos passam a ser
+ana@, bruno@, carla@, diego@ e elisa@autotrans.com, também com a senha 1234.)
 
-Importante: o backend precisa estar rodando (passo 1) para o frontend
-funcionar. O frontend nunca deve ser acessado pela porta 5000 - essa
-porta e exclusiva da API.
+**MySQL (opcional):** execute `database/create_database.sql` e depois
+`database/popular_banco.sql`; no `.env`, descomente
+`DATABASE_URL=mysql+pymysql://root:sua_senha@localhost:3306/autotrans_db`.
+O SQL dos Repositories é padrão e funciona nos dois bancos.
 
-Atencao (Live Server): se o VS Code estiver com a pasta inteira do
-projeto aberta (backend + frontend juntos), o Live Server pode recarregar
-a pagina sozinho toda vez que o arquivo `backend/autotrans.db` mudar. O
-arquivo `.vscode/settings.json` do projeto ja configura o Live Server
-para ignorar a pasta `backend/` - reabra o VS Code depois de clonar para
-essa configuracao valer.
+### 4. Importação de questões em lote
 
-### 4. Criar uma conta e testar
+Na tela **Gerir Questões** (administrador) é possível enviar um arquivo `.json`
+com categorias, questões e alternativas. O arquivo
+`backend/database/questoes_iniciais.json` está no formato esperado e serve de modelo:
 
-1. Abra o frontend, clique em "Comecar a Aprender" e crie uma conta - a
-   **primeira conta criada vira administrador automaticamente**
-2. Como administrador, cadastre categorias/questoes/materiais pelas telas
-   "Gerir ..." (ou use os scripts de seed do passo 2)
-3. Crie uma segunda conta (aluno comum) para testar o fluxo de estudo sem
-   acesso as telas de administracao
-4. Escolha uma trilha (categoria) e inicie um simulado
-5. Responda todas as questoes e finalize - a nota aparece na tela de
-   resultado, e o simulado passa a contar em "Meu Historico"
+```json
+[
+  {
+    "categoria": "Legislação de Trânsito",
+    "descricao": "Regras de circulação...",
+    "questoes": [
+      {"enunciado": "...",
+       "alternativas": [{"texto": "...", "correta": true}, {"texto": "...", "correta": false}]}
+    ]
+  }
+]
+```
+
+Categorias e questões que já existem são reaproveitadas (não duplicam).
+
+---
+
+## Autenticação, permissões e privacidade
+
+- `POST /auth/registro` e `POST /auth/login` devolvem um token assinado; o
+  frontend o envia em `Authorization: Bearer <token>`.
+- Senhas só como hash. Chaves (`SECRET_KEY`, `GEMINI_API_KEY`) só no `.env`, fora do repositório.
+- `@login_obrigatorio` (401) e `@admin_obrigatorio` (403) protegem as rotas.
+- `/auth/me`, simulados e favoritos sempre usam o usuário do token — ninguém
+  acessa dados de outro aluno; ninguém se promove a administrador pelo perfil.
+- **Termo de consentimento:** o cadastro exige aceitar os Termos de Uso
+  (`frontend/paginas/termos.html`); o aceite e a data ficam gravados em
+  `usuarios.aceitou_termos` e `usuarios.data_aceite_termos`.
 
 ---
 
 ## Principais rotas da API
 
-| Metodo | Rota | O que faz | Acesso |
+| Método | Rota | O que faz | Acesso |
 |---|---|---|---|
-| POST | /auth/registro | Cria conta {nome, email, senha} | Publico |
-| POST | /auth/login | Login {email, senha} | Publico |
-| POST | /auth/logout | Encerra a sessao (no cliente) | Publico |
-| GET | /auth/me | Dados do usuario logado | Logado |
-| PUT | /auth/me | Edita os proprios dados {nome, email, senha, foto_url} | Logado |
-| DELETE | /auth/me | Exclui a propria conta | Logado |
-| GET | /categorias/ , /categorias/<id> | Lista/busca categorias | Publico |
-| POST / PUT / DELETE | /categorias/ , /categorias/<id> | Cadastra/edita/remove categoria | Admin |
-| GET | /questoes/ , /questoes/<id> | Lista/busca questoes (aceita ?categoria_id=) | Publico |
-| POST / PUT / DELETE | /questoes/ , /questoes/<id> | Cadastra/edita/remove questao | Admin |
-| GET | /alternativas/ , /alternativas/<id> | Lista/busca alternativas (aceita ?questao_id=) | Publico |
-| POST / PUT / DELETE | /alternativas/ , /alternativas/<id> | Cadastra/edita/remove alternativa | Admin |
-| GET | /materiais/ , /materiais/<id> | Lista/busca materiais (aceita ?categoria_id=) | Publico |
-| POST / PUT / DELETE | /materiais/ , /materiais/<id> | Cadastra/edita/remove material | Admin |
-| GET | /usuarios/ | Lista usuarios | Admin |
-| POST / PUT / DELETE | /usuarios/ , /usuarios/<id> | Cadastra/edita/remove usuario | Admin |
-| POST | /simulados/ | Inicia simulado {categoria_id} (usuario vem do token) | Logado |
-| GET | /simulados/<id> | Busca um simulado (so o dono ve; senao 403) | Logado |
-| POST | /simulados/<id>/finalizar | Envia respostas e gera o resultado (so o dono) | Logado |
-| GET | /simulados/historico | Lista simulados do usuario logado + estatisticas | Logado |
+| POST | /auth/registro | Cria conta {nome, email, senha, aceitou_termos} | Público |
+| POST | /auth/login | Login {email, senha} | Público |
+| GET / PUT / DELETE | /auth/me | Ver, editar e excluir a própria conta | Logado |
+| GET | /categorias/ , /categorias/<id> | Lista e consulta categorias | Público |
+| GET | /questoes/?categoria_id= , /questoes/<id> | Lista/filtra e consulta questões | Público |
+| GET | /questoes/buscar?q= | Busca por palavra-chave | Público |
+| GET | /questoes/erradas | Caderno de erros | Logado |
+| POST | /questoes/<id>/explicacao | Explicação por IA | Logado |
+| POST | /questoes/importar | Importação em lote (JSON) | Admin |
+| GET | /alternativas/?questao_id= | Lista/filtra alternativas | Público |
+| GET | /materiais/?categoria_id= | Lista/filtra materiais | Público |
+| POST / PUT / DELETE | /categorias, /questoes, /alternativas, /materiais | Cadastro, edição e exclusão | Admin |
+| GET / POST / PUT / DELETE | /usuarios/ , /usuarios/<id> | Gestão de usuários | Admin |
+| POST | /simulados/ | Inicia simulado {categoria_id} | Logado |
+| GET | /simulados/<id> | Detalhes (só o dono) | Logado |
+| POST | /simulados/<id>/finalizar | Corrige e gera a nota | Logado |
+| GET | /simulados/<id>/gabarito | Gabarito | Logado |
+| GET | /simulados/historico | Histórico e estatísticas | Logado |
+| GET / POST / DELETE | /favoritos/ , /favoritos/<questao_id> | Favoritos do aluno | Logado |
+| GET | /progresso/ , /progresso/sequencia | Progresso e sequência de estudo | Logado |
+| GET | /ranking/ | Ranking dos alunos | Logado |
+| GET | /relatorios/geral | Relatório geral | Admin |
 
 ---
 
-## Modelagem (models)
+## SOLID no AutoTrans
 
-| Model | Campos principais | Observacao |
-|---|---|---|
-| Usuario | nome, email, senha_hash, foto_url, is_admin, data_criacao, data_atualizacao | senha nunca fica em texto puro |
-| Categoria | nome, descricao | agrupa questoes e materiais |
-| Material | categoria_id, conteudo, url | pertence a uma categoria |
-| Questao | categoria_id, enunciado | pertence a uma categoria |
-| Alternativa | questao_id, texto, correta | pertence a uma questao |
-| Simulado | usuario_id, categoria_id, titulo, pontuacao_max, data_realizacao | criado ao iniciar um simulado |
-| ItemSimulado | simulado_id, questao_id, alternativa_escolhida_id, acerto | uma linha por questao respondida |
-| Resultado | simulado_id, nota, data_resultado | gerado ao finalizar o simulado |
-
-Todos os models herdam de ModeloBase, que define apenas o campo id. Cada
-model que precisa de data de criacao declara a propria coluna com o nome
-que faz sentido para ele (ex.: Simulado.data_realizacao,
-Resultado.data_resultado).
-
----
-
-## Proximos passos
-
-- Progresso real por categoria nas trilhas
-- Ranking real com XP por usuario
-- Justificativa da resposta apos a correcao automatica
-- Conectar o quiz do painel principal ao banco de questoes real via API
+| Princípio | Como aparece no código |
+|---|---|
+| Responsabilidade única | `FinalizarSimuladoService` só corrige e dá a nota; `RankingRepository` só monta a consulta do ranking; `RankingController` só recebe a requisição e devolve o JSON. |
+| Aberto/fechado | Para criar a explicação por IA foi adicionada a classe `ExplicarQuestaoService`, sem alterar nenhum service que já existia. |
+| Substituição de Liskov | `Questao`, `Usuario`, `Simulado` e as demais entidades podem ser usadas por qualquer service através dos métodos herdados de `ModeloBase`. |
+| Segregação de interfaces | Os controllers só implementam os verbos HTTP de que precisam: `RelatorioGeralController` tem apenas `get`, `RegistroController` tem apenas `post`. |
+| Inversão de dependência | `ExplicarQuestaoService(ia=...)` recebe o serviço de IA pronto; trocar o Gemini por outro provedor não muda o caso de uso. |

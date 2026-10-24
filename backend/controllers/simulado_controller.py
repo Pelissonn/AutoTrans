@@ -1,79 +1,82 @@
-from flask import Blueprint, jsonify, request
-from sqlalchemy.exc import SQLAlchemyError
+from flask import Blueprint, request
 
-from auth_utils import login_obrigatorio
-from models import db
-from services.simulados.iniciar_simulado_service import IniciarSimuladoService
-from services.simulados.buscar_simulado_service import BuscarSimuladoService
-from services.simulados.finalizar_simulado_service import FinalizarSimuladoService
-from services.simulados.consultar_historico_service import ConsultarHistoricoSimuladosService
+from controllers.base_controller import ERROS_DE_NEGOCIO, BaseController
+from services.simulados import (
+    BuscarSimuladoService,
+    ConsultarGabaritoService,
+    ConsultarHistoricoService,
+    FinalizarSimuladoService,
+    IniciarSimuladoService,
+)
+from utils.auth import login_obrigatorio
 
 simulado_bp = Blueprint("simulado", __name__, url_prefix="/simulados")
 
 
-@simulado_bp.get("/historico")
-@login_obrigatorio
-def historico():
-    """
-    Lista os simulados já finalizados do usuário logado, com estatísticas
-    (média, melhor e pior nota). A consulta complexa (join Simulado+Resultado)
-    fica no Repository — este controller só chama o Service.
-    """
-    service = ConsultarHistoricoSimuladosService()
-    resultado = service.executar(request.usuario_id)
-    return jsonify(resultado), 200
+class SimuladoController(BaseController):
+    """Iniciar um simulado e ver seus detalhes (o usuário sempre vem do token)."""
+
+    decorators = [login_obrigatorio]
+
+    def get(self, id):
+        try:
+            return self.responder(BuscarSimuladoService().executar(id, request.usuario_id))
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
+
+    def post(self):
+        dados = self.dados_json()
+        try:
+            simulado = IniciarSimuladoService().executar(request.usuario_id, dados.get("categoria_id"))
+            return self.responder(simulado, 201)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
 
-@simulado_bp.get("/<int:id>")
-@login_obrigatorio
-def buscar(id):
-    try:
-        service = BuscarSimuladoService()
-        simulado = service.executar(id, request.usuario_id)
+class FinalizarSimuladoController(BaseController):
+    """POST /simulados/<id>/finalizar {respostas: [{item_id, alternativa_id}]}."""
 
-        if simulado is None:
-            return jsonify({"erro": "Simulado não encontrado."}), 404
+    decorators = [login_obrigatorio]
 
-        return jsonify(simulado), 200
-
-    except PermissionError as erro:
-        return jsonify({"erro": str(erro)}), 403
+    def post(self, id):
+        dados = self.dados_json()
+        try:
+            simulado = FinalizarSimuladoService().executar(id, dados.get("respostas", []), request.usuario_id)
+            return self.responder(simulado)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
 
-@simulado_bp.post("/")
-@login_obrigatorio
-def iniciar():
-    try:
-        dados = request.get_json() or {}
-        service = IniciarSimuladoService()
-        # usuario_id vem do token (usuário logado), nunca do corpo da requisição —
-        # assim ninguém consegue criar um simulado "em nome" de outra pessoa.
-        simulado = service.executar(request.usuario_id, dados.get("categoria_id"))
-        return jsonify(simulado), 201
+class HistoricoSimuladoController(BaseController):
+    """GET /simulados/historico — simulados finalizados e estatísticas do aluno."""
 
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
+    decorators = [login_obrigatorio]
 
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao criar simulado no banco de dados."}), 500
+    def get(self):
+        return self.responder(ConsultarHistoricoService().executar(request.usuario_id))
 
 
-@simulado_bp.post("/<int:id>/finalizar")
-@login_obrigatorio
-def finalizar(id):
-    try:
-        dados = request.get_json() or {}
-        service = FinalizarSimuladoService()
-        simulado = service.executar(id, dados.get("respostas", []), request.usuario_id)
-        return jsonify(simulado), 200
+class GabaritoSimuladoController(BaseController):
+    """GET /simulados/<id>/gabarito — correção questão a questão."""
 
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
+    decorators = [login_obrigatorio]
 
-    except PermissionError as erro:
-        return jsonify({"erro": str(erro)}), 403
+    def get(self, id):
+        try:
+            return self.responder(ConsultarGabaritoService().executar(id, request.usuario_id))
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao finalizar simulado no banco de dados."}), 500
+
+simulado_view = SimuladoController.as_view("simulado_api")
+simulado_bp.add_url_rule("/", view_func=simulado_view, methods=["POST"])
+simulado_bp.add_url_rule("/<int:id>", view_func=simulado_view, methods=["GET"])
+simulado_bp.add_url_rule(
+    "/<int:id>/finalizar", view_func=FinalizarSimuladoController.as_view("simulado_finalizar"), methods=["POST"]
+)
+simulado_bp.add_url_rule(
+    "/historico", view_func=HistoricoSimuladoController.as_view("simulado_historico"), methods=["GET"]
+)
+simulado_bp.add_url_rule(
+    "/<int:id>/gabarito", view_func=GabaritoSimuladoController.as_view("simulado_gabarito"), methods=["GET"]
+)

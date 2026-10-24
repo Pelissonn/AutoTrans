@@ -38,6 +38,10 @@
         <div class="form-group"><input type="text" id="cadastro-nome" placeholder="Nome de usuário"></div>
         <div class="form-group"><input type="email" id="cadastro-email" placeholder="E-mail"></div>
         <div class="form-group"><input type="password" id="cadastro-senha" placeholder="Senha (mínimo 4 caracteres)"></div>
+        <label class="termos-aceite">
+            <input type="checkbox" id="cadastro-termos">
+            <span>Li e aceito os <a href="paginas/termos.html" target="_blank" rel="noopener">Termos de Uso e a Política de Privacidade</a>.</span>
+        </label>
         <button class="btn btn-green" onclick="cadastrarUsuario()">Continuar</button>
         <p id="cadastro-mensagem" style="color:#e53e3e;"></p>
         <p class="link-text">Já tem conta? <span onclick="navigateTo('screen-login')">Faça login</span></p>

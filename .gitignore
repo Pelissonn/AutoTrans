@@ -1,5 +1,9 @@
 venv/
 env/
+.venv/
 __pycache__/
 *.pyc
-autotrans.db
+.env
+*.db-journal
+# O banco SQLite já populado (backend/instance/autotrans.db) vai para o repositório
+# para a avaliação rodar sem passos extras. Para recriá-lo: python database/popular_banco.py

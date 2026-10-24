@@ -10,18 +10,27 @@ class Usuario(ModeloBase):
     __tablename__ = "usuarios"
 
     nome = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     senha_hash = db.Column(db.String(255), nullable=False)
     foto_url = db.Column(db.String(500), nullable=True)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    # Termo de consentimento: decisão do usuário registrada no cadastro.
+    aceitou_termos = db.Column(db.Boolean, default=False, nullable=False)
+    data_aceite_termos = db.Column(db.DateTime, nullable=True)
     data_criacao = db.Column(db.DateTime, default=datetime.now, nullable=False)
     data_atualizacao = db.Column(
         db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
-    simulados = db.relationship("Simulado", back_populates="usuario")
+    # Excluir o usuário apaga também o histórico dele (simulados, itens,
+    # resultados e favoritos) — são dados do próprio aluno.
+    simulados = db.relationship(
+        "Simulado", back_populates="usuario", cascade="all, delete-orphan"
+    )
+    favoritos = db.relationship(
+        "Favorito", back_populates="usuario", cascade="all, delete-orphan"
+    )
 
-    # ---------- Senha ----------
     def definir_senha(self, senha):
         """Nunca guardamos a senha em texto puro — só o hash dela."""
         self.senha_hash = generate_password_hash(senha)
@@ -29,52 +38,24 @@ class Usuario(ModeloBase):
     def verificar_senha(self, senha):
         return check_password_hash(self.senha_hash, senha)
 
-    # ---------- CRUD (Active Record) ----------
-    def salvar(self):
-        """CREATE: salva um novo usuário no banco."""
-        db.session.add(self)
-        db.session.commit()
-
-    def atualizar(self, nome=None, email=None, senha=None, foto_url=None, is_admin=None):
-        """UPDATE: altera apenas os campos informados."""
-        if nome is not None:
-            self.nome = nome
-        if email is not None:
-            self.email = email
-        if senha:
-            self.definir_senha(senha)
-        if foto_url is not None:
-            self.foto_url = foto_url
-        if is_admin is not None:
-            self.is_admin = is_admin
-        db.session.commit()
-
-    def deletar(self):
-        """DELETE: remove o usuário do banco."""
-        db.session.delete(self)
-        db.session.commit()
-
-    @staticmethod
-    def listar_todos():
-        """READ: retorna todos os usuários."""
-        return Usuario.query.order_by(Usuario.id.asc()).all()
-
-    @staticmethod
-    def buscar_por_id(id):
-        """READ: busca um usuário pelo id."""
-        return Usuario.query.get(id)
-
-    @staticmethod
-    def buscar_por_email(email):
-        """READ auxiliar: busca um usuário pelo e-mail."""
-        return Usuario.query.filter_by(email=email).first()
+    def registrar_aceite_termos(self):
+        self.aceitou_termos = True
+        self.data_aceite_termos = datetime.now()
 
     def to_dict(self):
-        """Converte o objeto Usuario para dicionário/JSON (nunca inclui a senha)."""
+        """Converte para dicionário/JSON (nunca inclui a senha)."""
         return {
             "id": self.id,
             "nome": self.nome,
             "email": self.email,
             "foto_url": self.foto_url,
             "is_admin": self.is_admin,
+            "aceitou_termos": self.aceitou_termos,
+            "data_aceite_termos": (
+                self.data_aceite_termos.isoformat() if self.data_aceite_termos else None
+            ),
+            "data_criacao": self.data_criacao.isoformat() if self.data_criacao else None,
         }
+
+    def __repr__(self):
+        return f"<Usuario {self.email}>"

@@ -1,3 +1,6 @@
+// Registros da tabela por id: o botão Editar busca aqui (evita colocar JSON dentro do HTML).
+const registrosPorId = {};
+
 const formAlternativa = document.querySelector("#form-alternativa");
 const alternativaIdCampo = document.querySelector("#alternativa-id");
 const campoQuestao = document.querySelector("#questao_id");
@@ -40,13 +43,14 @@ function renderizarAlternativas(alternativas) {
     alternativas.forEach((a) => {
         const questao = questoesCache.find((q) => q.id === a.questao_id);
         const linha = document.createElement("tr");
+        registrosPorId[a.id] = a;
         linha.innerHTML = `
             <td>${a.id}</td>
             <td>${questao ? "#" + questao.id : a.questao_id}</td>
-            <td>${a.texto}</td>
+            <td>${escaparHtml(a.texto)}</td>
             <td>${a.correta ? "✅" : ""}</td>
             <td>
-                <a href="#" onclick='prepararEdicao(${JSON.stringify(a)}); return false;'>Editar</a>
+                <a href="#" onclick="prepararEdicao(registrosPorId[${a.id}]); return false;">Editar</a>
                 &nbsp;|&nbsp;
                 <a href="#" style="color:#e53e3e;" onclick="deletarAlternativa(${a.id}); return false;">Excluir</a>
             </td>`;

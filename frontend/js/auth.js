@@ -7,11 +7,18 @@ async function cadastrarUsuario() {
     const nome = document.getElementById("cadastro-nome").value.trim();
     const email = document.getElementById("cadastro-email").value.trim();
     const senha = document.getElementById("cadastro-senha").value;
+    // Termo de consentimento: a decisão do usuário é enviada e registrada no backend.
+    const aceitou_termos = document.getElementById("cadastro-termos").checked;
     const msg = document.getElementById("cadastro-mensagem");
     msg.textContent = "";
 
+    if (!aceitou_termos) {
+        msg.textContent = "Para criar a conta, aceite os Termos de Uso e a Política de Privacidade.";
+        return;
+    }
+
     try {
-        const resposta = await api.post("/auth/registro", { nome, email, senha });
+        const resposta = await api.post("/auth/registro", { nome, email, senha, aceitou_termos });
         definirToken(resposta.token);
         window.location.href = "paginas/painel.html";
     } catch (erro) {

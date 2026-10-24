@@ -3,7 +3,7 @@ from .base import ModeloBase
 
 
 class ItemSimulado(ModeloBase):
-    """Cada questão de um Simulado, junto com a resposta marcada pelo usuário."""
+    """Cada questão de um Simulado, junto com a resposta marcada pelo aluno."""
 
     __tablename__ = "itens_simulado"
 
@@ -16,27 +16,13 @@ class ItemSimulado(ModeloBase):
     questao = db.relationship("Questao")
     alternativa_escolhida = db.relationship("Alternativa")
 
-    # ---------- CRUD (Active Record) ----------
-    def salvar(self):
-        """CREATE: salva um novo item de simulado no banco."""
-        db.session.add(self)
-        db.session.commit()
-
-    @staticmethod
-    def buscar_por_id(id):
-        """READ: busca um item de simulado pelo id."""
-        return ItemSimulado.query.get(id)
-
-    # ---------- Regra própria do item ----------
-    def verificar(self):
-        """Compara a alternativa escolhida com a alternativa correta da questão."""
-        correta = self.questao.alternativa_correta()
+    def corrigir(self):
+        """Compara a alternativa escolhida com a correta da questão (não grava)."""
+        correta = self.questao.alternativa_correta() if self.questao else None
         self.acerto = bool(correta and self.alternativa_escolhida_id == correta.id)
-        db.session.commit()
         return self.acerto
 
     def to_dict(self):
-        """Converte o objeto ItemSimulado para dicionário/JSON."""
         return {
             "id": self.id,
             "simulado_id": self.simulado_id,
@@ -47,3 +33,6 @@ class ItemSimulado(ModeloBase):
             ),
             "acerto": self.acerto,
         }
+
+    def __repr__(self):
+        return f"<ItemSimulado {self.id}>"

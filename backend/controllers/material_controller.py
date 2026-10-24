@@ -1,92 +1,62 @@
-from flask import Blueprint, jsonify, request
-from sqlalchemy.exc import SQLAlchemyError
+from flask import Blueprint, request
 
-from auth_utils import admin_obrigatorio
-from models import db
-from services.materiais.create_material_service import CadastrarMaterialService
-from services.materiais.read_material_service import (
-    BuscarMaterialPorIdService,
+from controllers.base_controller import ERROS_DE_NEGOCIO, BaseController
+from services.materiais import (
+    BuscarMaterialService,
+    CadastrarMaterialService,
+    EditarMaterialService,
+    ExcluirMaterialService,
     ListarMateriaisPorCategoriaService,
     ListarMateriaisService,
 )
-from services.materiais.update_material_service import EditarMaterialService
-from services.materiais.delete_material_service import DeletarMaterialService
+from utils.auth import admin_obrigatorio
 
 material_bp = Blueprint("material", __name__, url_prefix="/materiais")
 
 
-@material_bp.get("/")
-def listar():
-    categoria_id = request.args.get("categoria_id")
+class MaterialController(BaseController):
+    """Materiais de estudo: leitura pública (com filtro ?categoria_id=), escrita só administrador."""
 
-    if categoria_id:
-        service = ListarMateriaisPorCategoriaService()
-        materiais = service.executar(categoria_id)
-    else:
-        service = ListarMateriaisService()
-        materiais = service.executar()
+    def get(self, id=None):
+        try:
+            if id is not None:
+                return self.responder(BuscarMaterialService().executar(id))
 
-    return jsonify(materiais), 200
+            categoria_id = request.args.get("categoria_id", type=int)
+            if categoria_id:
+                return self.responder(ListarMateriaisPorCategoriaService().executar(categoria_id))
+            return self.responder(ListarMateriaisService().executar())
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
+    @admin_obrigatorio
+    def post(self):
+        dados = self.dados_json()
+        try:
+            material = CadastrarMaterialService().executar(
+                dados.get("categoria_id"), dados.get("conteudo"), dados.get("url")
+            )
+            return self.responder(material, 201)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
-@material_bp.get("/<int:id>")
-def buscar(id):
-    service = BuscarMaterialPorIdService()
-    material = service.executar(id)
+    @admin_obrigatorio
+    def put(self, id):
+        dados = self.dados_json()
+        try:
+            material = EditarMaterialService().executar(
+                id, dados.get("conteudo"), dados.get("url"), dados.get("categoria_id")
+            )
+            return self.responder(material)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
-    if material is None:
-        return jsonify({"erro": "Material não encontrado."}), 404
-
-    return jsonify(material), 200
-
-
-@material_bp.post("/")
-@admin_obrigatorio
-def cadastrar():
-    try:
-        dados = request.get_json() or {}
-        service = CadastrarMaterialService()
-        material = service.executar(
-            dados.get("categoria_id"), dados.get("conteudo"), dados.get("url")
-        )
-        return jsonify(material), 201
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao salvar material no banco de dados."}), 500
-
-
-@material_bp.put("/<int:id>")
-@admin_obrigatorio
-def editar(id):
-    try:
-        dados = request.get_json() or {}
-        service = EditarMaterialService()
-        material = service.executar(id, dados.get("conteudo"), dados.get("url"))
-        return jsonify(material), 200
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao atualizar material no banco de dados."}), 500
+    @admin_obrigatorio
+    def delete(self, id):
+        try:
+            return self.responder(ExcluirMaterialService().executar(id))
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
 
-@material_bp.delete("/<int:id>")
-@admin_obrigatorio
-def deletar(id):
-    try:
-        service = DeletarMaterialService()
-        service.executar(id)
-        return "", 204
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao deletar material no banco de dados."}), 500
+MaterialController.registrar_crud(material_bp, "material_api")

@@ -1,0 +1,87 @@
+[
+  {
+    "categoria": "Legislação de Trânsito",
+    "conteudo": "A Lei Seca adota tolerância zero: qualquer concentração de álcool no organismo do condutor já é considerada infração, independentemente da quantidade ingerida. Não existe uma 'dose permitida' antes de dirigir.",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+    "categoria": "Legislação de Trânsito",
+    "conteudo": "Em cruzamentos sem sinalização (sem placa ou semáforo), a regra geral de preferência é: tem prioridade de passagem o veículo que vier pela direita do condutor. Essa regra vale para a maioria dos cruzamentos comuns em áreas urbanas.",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+    "categoria": "Legislação de Trânsito",
+    "conteudo": "O uso do cinto de segurança é obrigatório para todos os ocupantes do veículo, em qualquer banco — motorista, passageiro da frente e passageiros de trás. Trafegar sem o cinto é considerado infração grave.",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+    "categoria": "Legislação de Trânsito",
+    "conteudo": "Limites de velocidade sem sinalização (CTB, art. 61): vias de trânsito rápido 80 km/h, arteriais 60 km/h, coletoras 40 km/h e locais 30 km/h. Em rodovias de pista dupla o limite para automóveis é 110 km/h e, em pista simples, 100 km/h.",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+    "categoria": "Sinalização de Trânsito",
+    "conteudo": "As placas de trânsito são divididas em três grandes grupos, cada um com uma cor e formato próprios: REGULAMENTAÇÃO (circulares, fundo branco, borda vermelha) impõem uma obrigação, proibição ou restrição — como 'Pare' ou 'Proibido Estacionar'. ADVERTÊNCIA (triangulares, fundo amarelo) alertam sobre um perigo à frente, como uma curva ou pista escorregadia. INDICAÇÃO (retangulares, fundo azul ou verde) informam direções, distâncias e serviços disponíveis.",
+    "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/senatran/manuais-brasileiros-de-sinalizacao-de-transito"
+  },
+  {
+    "categoria": "Sinalização de Trânsito",
+    "conteudo": "A placa 'PARE' (octogonal, vermelha) é a única que exige parada completa e obrigatória do veículo antes de prosseguir, mesmo que a via esteja livre no momento.",
+    "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/senatran/manuais-brasileiros-de-sinalizacao-de-transito"
+  },
+  {
+    "categoria": "Sinalização de Trânsito",
+    "conteudo": "Semáforos amarelos piscantes (intermitentes) indicam que o condutor deve reduzir a velocidade e seguir com atenção redobrada — é diferente do amarelo fixo, que antecede o vermelho e pede que o condutor pare, caso ainda seja possível fazê-lo com segurança.",
+    "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/senatran/manuais-brasileiros-de-sinalizacao-de-transito"
+  },
+  {
+    "categoria": "Sinalização de Trânsito",
+    "conteudo": "A ordem de prioridade da sinalização (CTB, art. 89) é: 1º ordens do agente de trânsito, 2º indicações do semáforo, 3º demais sinais (placas e marcas) e 4º normas gerais de circulação.",
+    "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/senatran/manuais-brasileiros-de-sinalizacao-de-transito"
+  },
+  {
+    "categoria": "Direção Defensiva",
+    "conteudo": "Direção defensiva é a forma de dirigir que busca prevenir acidentes, mesmo diante de condições adversas ou de erros cometidos por outros condutores, pedestres ou ciclistas. Não basta seguir as regras: é preciso antecipar riscos.",
+    "url": "https://www.detraneduca.pr.gov.br/Pagina/Direcao-defensiva"
+  },
+  {
+    "categoria": "Direção Defensiva",
+    "conteudo": "A distância de segurança em relação ao veículo da frente não deve ser fixa — ela precisa aumentar conforme a velocidade do trânsito e as condições da via (chuva, pista molhada, pouca visibilidade). Quanto maior a velocidade, maior o espaço necessário para frear com segurança.",
+    "url": "https://www.detraneduca.pr.gov.br/Pagina/Direcao-defensiva"
+  },
+  {
+    "categoria": "Direção Defensiva",
+    "conteudo": "Cansaço e sono são fatores de risco tão sérios quanto o álcool na direção. Ao sentir sinais de sonolência, a orientação é parar em local seguro e descansar — abrir o vidro ou aumentar o som não resolvem o problema, só mascaram os sintomas por pouco tempo.",
+    "url": "https://www.detraneduca.pr.gov.br/Pagina/Direcao-defensiva"
+  },
+  {
+    "categoria": "Primeiros Socorros",
+    "conteudo": "Ao se deparar com um acidente de trânsito, a primeira atitude não é mover a vítima, e sim sinalizar o local (para evitar novos acidentes) e acionar o socorro especializado pelo número 192 (SAMU).",
+    "url": "https://bvsms.saude.gov.br/bvs/publicacoes/manual_primeiros_socorros.pdf"
+  },
+  {
+    "categoria": "Primeiros Socorros",
+    "conteudo": "Vítimas conscientes devem, sempre que possível, ser mantidas no local onde foram encontradas, com o mínimo de movimentação, até a chegada do socorro — mover uma vítima de forma incorreta pode agravar lesões na coluna que não são visíveis a olho nu.",
+    "url": "https://bvsms.saude.gov.br/bvs/publicacoes/manual_primeiros_socorros.pdf"
+  },
+  {
+    "categoria": "Primeiros Socorros",
+    "conteudo": "O método PAS resume a sequência básica de atendimento em uma emergência: Proteger (sinalizar o local e evitar novos acidentes), Alertar (acionar o socorro) e Socorrer (prestar os primeiros cuidados dentro do que o condutor souber fazer com segurança, sem se colocar em risco).",
+    "url": "https://bvsms.saude.gov.br/bvs/publicacoes/manual_primeiros_socorros.pdf"
+  },
+  {
+    "categoria": "Mecânica Básica",
+    "conteudo": "O painel do veículo tem luzes indicadoras que avisam sobre problemas antes que eles se tornem graves. A luz de óleo, por exemplo, indica problema na pressão ou no nível do óleo do motor e não deve ser ignorada.",
+    "url": "https://escola.detran.rs.gov.br/wp-content/uploads/2022/11/funcionamento_veiculo.pdf"
+  },
+  {
+    "categoria": "Mecânica Básica",
+    "conteudo": "Pane seca é o termo usado quando o veículo para de funcionar por falta de combustível — é uma das causas mais comuns (e mais evitáveis) de veículos parados no acostamento.",
+    "url": "https://escola.detran.rs.gov.br/wp-content/uploads/2022/11/funcionamento_veiculo.pdf"
+  },
+  {
+    "categoria": "Mecânica Básica",
+    "conteudo": "Se o motor superaquecer ('ferver'), o procedimento correto é parar em local seguro, desligar o motor e aguardar esfriar antes de sequer tentar abrir o radiador — abrir um radiador quente pode causar queimaduras sérias pela pressão e pelo vapor liberado.",
+    "url": "https://escola.detran.rs.gov.br/wp-content/uploads/2022/11/funcionamento_veiculo.pdf"
+  }
+]

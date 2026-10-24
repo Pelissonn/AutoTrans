@@ -1,0 +1,1082 @@
+[
+  {
+    "categoria": "Legislação de Trânsito",
+    "descricao": "Regras de circulação e normas do Código de Trânsito Brasileiro.",
+    "questoes": [
+      {
+        "enunciado": "Segundo a Lei Seca, qual é a tolerância de álcool no sangue para dirigir?",
+        "alternativas": [
+          {
+            "texto": "É permitida uma taça de vinho antes de dirigir",
+            "correta": false
+          },
+          {
+            "texto": "Tolerância zero: qualquer quantidade já é infração",
+            "correta": true
+          },
+          {
+            "texto": "O limite é de uma dose de bebida destilada",
+            "correta": false
+          },
+          {
+            "texto": "Só é infração acima de 0,6 g de álcool por litro de sangue",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Em um cruzamento sem sinalização, quem tem a preferência de passagem?",
+        "alternativas": [
+          {
+            "texto": "Quem buzinar primeiro",
+            "correta": false
+          },
+          {
+            "texto": "O veículo que vem pela via mais larga",
+            "correta": false
+          },
+          {
+            "texto": "O veículo que vem pela direita do condutor",
+            "correta": true
+          },
+          {
+            "texto": "Quem estiver em maior velocidade",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Ao se aproximar de uma faixa de pedestres sem semáforo, o condutor deve:",
+        "alternativas": [
+          {
+            "texto": "Buzinar para o pedestre andar mais rápido",
+            "correta": false
+          },
+          {
+            "texto": "Dar prioridade total ao pedestre que está atravessando",
+            "correta": true
+          },
+          {
+            "texto": "Passar primeiro, desde que em velocidade baixa",
+            "correta": false
+          },
+          {
+            "texto": "Só parar se houver um agente de trânsito no local",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "O uso do cinto de segurança é obrigatório para:",
+        "alternativas": [
+          {
+            "texto": "Somente o motorista",
+            "correta": false
+          },
+          {
+            "texto": "Motorista e passageiro da frente",
+            "correta": false
+          },
+          {
+            "texto": "Todos os ocupantes do veículo, em qualquer banco",
+            "correta": true
+          },
+          {
+            "texto": "Apenas em viagens por rodovias",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Estacionar em vaga reservada para pessoa com deficiência, sem a credencial correspondente, é classificado como:",
+        "alternativas": [
+          {
+            "texto": "Infração leve",
+            "correta": false
+          },
+          {
+            "texto": "Infração gravíssima",
+            "correta": true
+          },
+          {
+            "texto": "Apenas uma advertência verbal",
+            "correta": false
+          },
+          {
+            "texto": "Permitido se a vaga estiver livre há muito tempo",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Em uma via arterial urbana sem placa de velocidade, o limite máximo permitido é de:",
+        "alternativas": [
+          {
+            "texto": "80 km/h",
+            "correta": false
+          },
+          {
+            "texto": "60 km/h",
+            "correta": true
+          },
+          {
+            "texto": "30 km/h",
+            "correta": false
+          },
+          {
+            "texto": "40 km/h",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "A CNH definitiva é concedida ao fim do período de Permissão para Dirigir (1 ano) se o condutor:",
+        "alternativas": [
+          {
+            "texto": "Passar em uma nova prova prática",
+            "correta": false
+          },
+          {
+            "texto": "Não tiver cometido infração grave ou gravíssima, nem reincidido em infração média",
+            "correta": true
+          },
+          {
+            "texto": "Tiver feito pelo menos 1.000 km rodados",
+            "correta": false
+          },
+          {
+            "texto": "Não tiver levado nenhuma multa de estacionamento",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Dirigir segurando ou manuseando o telefone celular é infração:",
+        "alternativas": [
+          {
+            "texto": "Média",
+            "correta": false
+          },
+          {
+            "texto": "Não é infração se o carro estiver devagar",
+            "correta": false
+          },
+          {
+            "texto": "Gravíssima",
+            "correta": true
+          },
+          {
+            "texto": "Leve",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Crianças com menos de 10 anos (que não atingiram 1,45 m de altura) devem ser transportadas:",
+        "alternativas": [
+          {
+            "texto": "Em qualquer banco, desde que a viagem seja curta",
+            "correta": false
+          },
+          {
+            "texto": "No banco traseiro, em dispositivo de retenção adequado à idade, peso e altura",
+            "correta": true
+          },
+          {
+            "texto": "No colo de um adulto no banco da frente",
+            "correta": false
+          },
+          {
+            "texto": "No banco da frente, com o cinto comum",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Ultrapassar outro veículo pelo acostamento é infração:",
+        "alternativas": [
+          {
+            "texto": "Média",
+            "correta": false
+          },
+          {
+            "texto": "Permitida em congestionamentos",
+            "correta": false
+          },
+          {
+            "texto": "Gravíssima",
+            "correta": true
+          },
+          {
+            "texto": "Leve",
+            "correta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "categoria": "Sinalização de Trânsito",
+    "descricao": "Significado de placas, semáforos e marcas viárias.",
+    "questoes": [
+      {
+        "enunciado": "A placa octogonal vermelha com a palavra 'PARE' exige que o condutor:",
+        "alternativas": [
+          {
+            "texto": "Reduza a velocidade e siga se não houver veículos",
+            "correta": false
+          },
+          {
+            "texto": "Pare completamente o veículo antes de prosseguir",
+            "correta": true
+          },
+          {
+            "texto": "Buzine antes de passar pelo cruzamento",
+            "correta": false
+          },
+          {
+            "texto": "Pare apenas se houver fiscalização no local",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "As placas circulares com fundo branco e borda vermelha são do tipo:",
+        "alternativas": [
+          {
+            "texto": "Advertência",
+            "correta": false
+          },
+          {
+            "texto": "Regulamentação",
+            "correta": true
+          },
+          {
+            "texto": "Indicação",
+            "correta": false
+          },
+          {
+            "texto": "Educativa",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "As placas triangulares com fundo amarelo têm a função de:",
+        "alternativas": [
+          {
+            "texto": "Proibir uma ação do condutor",
+            "correta": false
+          },
+          {
+            "texto": "Alertar sobre um perigo ou situação especial na via",
+            "correta": true
+          },
+          {
+            "texto": "Indicar serviços disponíveis nas proximidades",
+            "correta": false
+          },
+          {
+            "texto": "Indicar o limite máximo de velocidade",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "As placas retangulares azuis (de indicação) servem para informar:",
+        "alternativas": [
+          {
+            "texto": "Proibições de trânsito",
+            "correta": false
+          },
+          {
+            "texto": "Perigos existentes na pista",
+            "correta": false
+          },
+          {
+            "texto": "Serviços, distâncias e direções",
+            "correta": true
+          },
+          {
+            "texto": "Limites obrigatórios de velocidade",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Um semáforo amarelo piscante indica que o condutor deve:",
+        "alternativas": [
+          {
+            "texto": "Parar obrigatoriamente antes de seguir",
+            "correta": false
+          },
+          {
+            "texto": "Seguir em velocidade máxima",
+            "correta": false
+          },
+          {
+            "texto": "Reduzir a velocidade e seguir com atenção",
+            "correta": true
+          },
+          {
+            "texto": "Aguardar até que apenas pedestres atravessem",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "A linha dupla contínua amarela no centro da pista indica:",
+        "alternativas": [
+          {
+            "texto": "Ultrapassagem permitida apenas à noite",
+            "correta": false
+          },
+          {
+            "texto": "Faixa exclusiva de ônibus",
+            "correta": false
+          },
+          {
+            "texto": "Área de estacionamento regulamentado",
+            "correta": false
+          },
+          {
+            "texto": "Proibido ultrapassar nos dois sentidos",
+            "correta": true
+          }
+        ]
+      },
+      {
+        "enunciado": "As marcas longitudinais brancas no pavimento servem para:",
+        "alternativas": [
+          {
+            "texto": "Separar fluxos de sentidos opostos",
+            "correta": false
+          },
+          {
+            "texto": "Indicar locais de estacionamento proibido",
+            "correta": false
+          },
+          {
+            "texto": "Indicar ciclovias",
+            "correta": false
+          },
+          {
+            "texto": "Separar fluxos de veículos no mesmo sentido",
+            "correta": true
+          }
+        ]
+      },
+      {
+        "enunciado": "O agente de trânsito com o braço levantado verticalmente e a palma da mão para a frente indica:",
+        "alternativas": [
+          {
+            "texto": "Vire à direita",
+            "correta": false
+          },
+          {
+            "texto": "Ordem de parada obrigatória para todos os veículos",
+            "correta": true
+          },
+          {
+            "texto": "Siga em frente com cuidado",
+            "correta": false
+          },
+          {
+            "texto": "Diminua a velocidade",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Quando houver conflito entre sinais, prevalecem:",
+        "alternativas": [
+          {
+            "texto": "As ordens do agente de trânsito",
+            "correta": true
+          },
+          {
+            "texto": "As placas de regulamentação",
+            "correta": false
+          },
+          {
+            "texto": "As marcas pintadas no chão",
+            "correta": false
+          },
+          {
+            "texto": "O semáforo, em qualquer situação",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "As placas de fundo marrom indicam:",
+        "alternativas": [
+          {
+            "texto": "Obras na pista",
+            "correta": false
+          },
+          {
+            "texto": "Serviços de emergência",
+            "correta": false
+          },
+          {
+            "texto": "Atrativos turísticos",
+            "correta": true
+          },
+          {
+            "texto": "Perigo de deslizamento",
+            "correta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "categoria": "Direção Defensiva",
+    "descricao": "Como prever e evitar acidentes de trânsito.",
+    "questoes": [
+      {
+        "enunciado": "A distância de segurança em relação ao veículo da frente deve:",
+        "alternativas": [
+          {
+            "texto": "Ser sempre a mesma, independente da velocidade",
+            "correta": false
+          },
+          {
+            "texto": "Aumentar conforme a velocidade e as condições da via",
+            "correta": true
+          },
+          {
+            "texto": "Diminuir em dias de chuva, para não perder o outro carro de vista",
+            "correta": false
+          },
+          {
+            "texto": "Ser ignorada dentro de vias urbanas",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "O principal objetivo da direção defensiva é:",
+        "alternativas": [
+          {
+            "texto": "Chegar mais rápido ao destino",
+            "correta": false
+          },
+          {
+            "texto": "Prevenir acidentes, mesmo diante de erros de outros condutores",
+            "correta": true
+          },
+          {
+            "texto": "Reduzir o consumo de combustível",
+            "correta": false
+          },
+          {
+            "texto": "Evitar multas de trânsito",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Ao perceber sinais de sonolência durante a direção, o condutor deve:",
+        "alternativas": [
+          {
+            "texto": "Abrir o vidro do carro e continuar dirigindo",
+            "correta": false
+          },
+          {
+            "texto": "Aumentar o volume do som do veículo",
+            "correta": false
+          },
+          {
+            "texto": "Parar em local seguro e descansar antes de continuar",
+            "correta": true
+          },
+          {
+            "texto": "Dirigir mais rápido para chegar logo ao destino",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Ao se aproximar de uma curva sem visibilidade, o condutor deve:",
+        "alternativas": [
+          {
+            "texto": "Acelerar para passar pela curva mais rápido",
+            "correta": false
+          },
+          {
+            "texto": "Reduzir a velocidade antecipadamente",
+            "correta": true
+          },
+          {
+            "texto": "Buzinar e manter a mesma velocidade",
+            "correta": false
+          },
+          {
+            "texto": "Aproveitar para ultrapassar antes da curva",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Dirigir sob forte chuva exige do condutor que ele:",
+        "alternativas": [
+          {
+            "texto": "Aumente a velocidade para sair da chuva mais rápido",
+            "correta": false
+          },
+          {
+            "texto": "Reduza a velocidade e aumente a distância do carro à frente",
+            "correta": true
+          },
+          {
+            "texto": "Desligue os faróis para economizar bateria",
+            "correta": false
+          },
+          {
+            "texto": "Ignore a sinalização até a chuva passar",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "São elementos da direção defensiva:",
+        "alternativas": [
+          {
+            "texto": "Sorte, coragem e experiência",
+            "correta": false
+          },
+          {
+            "texto": "Conhecimento, atenção, previsão, decisão e habilidade",
+            "correta": true
+          },
+          {
+            "texto": "Velocidade, força e reflexo",
+            "correta": false
+          },
+          {
+            "texto": "Buzina, farol e freio",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "A aquaplanagem acontece quando:",
+        "alternativas": [
+          {
+            "texto": "O veículo passa em alta velocidade por uma lombada",
+            "correta": false
+          },
+          {
+            "texto": "Os pneus perdem o contato com o solo por causa de uma lâmina de água",
+            "correta": true
+          },
+          {
+            "texto": "O motor esquenta demais em dias de chuva",
+            "correta": false
+          },
+          {
+            "texto": "O freio de mão é puxado com o carro em movimento",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Ao ser ofuscado pelo farol alto de um veículo em sentido contrário, o condutor deve:",
+        "alternativas": [
+          {
+            "texto": "Desviar o olhar para a borda direita da pista e reduzir a velocidade",
+            "correta": true
+          },
+          {
+            "texto": "Acender o farol alto também, para revidar",
+            "correta": false
+          },
+          {
+            "texto": "Fechar os olhos por alguns segundos",
+            "correta": false
+          },
+          {
+            "texto": "Acelerar para passar logo pelo outro veículo",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Sob neblina, o condutor deve usar:",
+        "alternativas": [
+          {
+            "texto": "Apenas as luzes de posição",
+            "correta": false
+          },
+          {
+            "texto": "O pisca-alerta com o veículo em movimento normal",
+            "correta": false
+          },
+          {
+            "texto": "Farol baixo (e farol de neblina, se houver)",
+            "correta": true
+          },
+          {
+            "texto": "Farol alto, para enxergar mais longe",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "A 'regra dos dois segundos' serve para:",
+        "alternativas": [
+          {
+            "texto": "Medir o tempo de frenagem do ABS",
+            "correta": false
+          },
+          {
+            "texto": "Manter uma distância segura do veículo da frente",
+            "correta": true
+          },
+          {
+            "texto": "Calcular o tempo de troca de marcha",
+            "correta": false
+          },
+          {
+            "texto": "Definir quanto tempo esperar no semáforo verde",
+            "correta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "categoria": "Primeiros Socorros",
+    "descricao": "Condutas básicas em caso de acidente de trânsito.",
+    "questoes": [
+      {
+        "enunciado": "Ao encontrar uma vítima de acidente, a primeira ação recomendada é:",
+        "alternativas": [
+          {
+            "texto": "Mover a vítima imediatamente para a calçada",
+            "correta": false
+          },
+          {
+            "texto": "Sinalizar o local do acidente e acionar o socorro (SAMU 192)",
+            "correta": true
+          },
+          {
+            "texto": "Dar água para a vítima beber",
+            "correta": false
+          },
+          {
+            "texto": "Retirar o capacete da vítima em qualquer situação",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Em caso de hemorragia externa visível, o procedimento recomendado é:",
+        "alternativas": [
+          {
+            "texto": "Aplicar torniquete imediatamente em qualquer ferimento",
+            "correta": false
+          },
+          {
+            "texto": "Fazer compressão direta sobre o ferimento com um pano limpo",
+            "correta": true
+          },
+          {
+            "texto": "Lavar o ferimento com álcool",
+            "correta": false
+          },
+          {
+            "texto": "Não fazer nada até o socorro chegar",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Qual é o número de telefone do SAMU no Brasil?",
+        "alternativas": [
+          {
+            "texto": "190",
+            "correta": false
+          },
+          {
+            "texto": "193",
+            "correta": false
+          },
+          {
+            "texto": "192",
+            "correta": true
+          },
+          {
+            "texto": "199",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Uma vítima consciente de acidente deve, de preferência, ser:",
+        "alternativas": [
+          {
+            "texto": "Movida rapidamente para outro local",
+            "correta": false
+          },
+          {
+            "texto": "Mantida no local, mexida o mínimo possível, até o socorro chegar",
+            "correta": true
+          },
+          {
+            "texto": "Colocada de pé imediatamente",
+            "correta": false
+          },
+          {
+            "texto": "Alimentada e hidratada assim que possível",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "O método PAS, usado em primeiros socorros, representa:",
+        "alternativas": [
+          {
+            "texto": "Proteger, Alertar, Socorrer",
+            "correta": true
+          },
+          {
+            "texto": "Parar, Analisar, Sair",
+            "correta": false
+          },
+          {
+            "texto": "Prevenir, Agir, Salvar",
+            "correta": false
+          },
+          {
+            "texto": "Parar, Avisar, Seguir",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Em um motociclista acidentado, o capacete:",
+        "alternativas": [
+          {
+            "texto": "Deve ser retirado para a vítima respirar melhor",
+            "correta": false
+          },
+          {
+            "texto": "Deve ser girado para checar o pescoço",
+            "correta": false
+          },
+          {
+            "texto": "Não deve ser retirado, salvo por socorrista treinado",
+            "correta": true
+          },
+          {
+            "texto": "Deve ser retirado imediatamente",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Qual é o número do Corpo de Bombeiros no Brasil?",
+        "alternativas": [
+          {
+            "texto": "193",
+            "correta": true
+          },
+          {
+            "texto": "190",
+            "correta": false
+          },
+          {
+            "texto": "192",
+            "correta": false
+          },
+          {
+            "texto": "191",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "O triângulo de sinalização em caso de acidente deve ficar:",
+        "alternativas": [
+          {
+            "texto": "Dentro do porta-malas, até a polícia chegar",
+            "correta": false
+          },
+          {
+            "texto": "A exatamente 1 metro do veículo, em qualquer via",
+            "correta": false
+          },
+          {
+            "texto": "A uma distância que aumenta conforme a velocidade da via, para os outros condutores reduzirem a tempo",
+            "correta": true
+          },
+          {
+            "texto": "Encostado no veículo acidentado",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Em caso de queimadura leve, o recomendado é:",
+        "alternativas": [
+          {
+            "texto": "Resfriar o local com água corrente limpa, sem aplicar produtos caseiros",
+            "correta": true
+          },
+          {
+            "texto": "Passar manteiga ou pasta de dente",
+            "correta": false
+          },
+          {
+            "texto": "Estourar as bolhas",
+            "correta": false
+          },
+          {
+            "texto": "Cobrir com algodão",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Ao parar para ajudar em um acidente, o condutor deve estacionar:",
+        "alternativas": [
+          {
+            "texto": "Em local seguro, fora da pista se possível, com o pisca-alerta ligado",
+            "correta": true
+          },
+          {
+            "texto": "No meio da pista, para bloquear o trânsito",
+            "correta": false
+          },
+          {
+            "texto": "Colado ao veículo acidentado",
+            "correta": false
+          },
+          {
+            "texto": "Em qualquer lugar, desde que seja rápido",
+            "correta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "categoria": "Mecânica Básica",
+    "descricao": "Cuidados e verificações básicas do veículo.",
+    "questoes": [
+      {
+        "enunciado": "A luz de óleo acesa no painel do veículo indica:",
+        "alternativas": [
+          {
+            "texto": "Necessidade de calibrar os pneus",
+            "correta": false
+          },
+          {
+            "texto": "Problema na pressão ou no nível do óleo do motor",
+            "correta": true
+          },
+          {
+            "texto": "Farol queimado",
+            "correta": false
+          },
+          {
+            "texto": "Bateria descarregada",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Qual equipamento é obrigatório para sinalizar o veículo em caso de pane?",
+        "alternativas": [
+          {
+            "texto": "Somente o extintor de incêndio",
+            "correta": false
+          },
+          {
+            "texto": "Triângulo de sinalização",
+            "correta": true
+          },
+          {
+            "texto": "Somente o macaco",
+            "correta": false
+          },
+          {
+            "texto": "Nenhum equipamento é exigido por lei",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "A verificação da pressão dos pneus deve ser feita, de preferência:",
+        "alternativas": [
+          {
+            "texto": "Apenas quando o pneu murchar visivelmente",
+            "correta": false
+          },
+          {
+            "texto": "Regularmente, com os pneus frios",
+            "correta": true
+          },
+          {
+            "texto": "Somente em postos de gasolina",
+            "correta": false
+          },
+          {
+            "texto": "Uma vez por ano",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Se o motor do veículo superaquecer (\"ferver\"), o condutor deve:",
+        "alternativas": [
+          {
+            "texto": "Continuar dirigindo até o destino",
+            "correta": false
+          },
+          {
+            "texto": "Parar em local seguro, desligar o motor e aguardar esfriar antes de abrir o radiador",
+            "correta": true
+          },
+          {
+            "texto": "Abrir o radiador imediatamente, mesmo quente",
+            "correta": false
+          },
+          {
+            "texto": "Jogar água fria diretamente no motor quente",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "O termo 'pane seca' se refere a:",
+        "alternativas": [
+          {
+            "texto": "Bateria descarregada",
+            "correta": false
+          },
+          {
+            "texto": "Falta de combustível no veículo",
+            "correta": true
+          },
+          {
+            "texto": "Pneu furado",
+            "correta": false
+          },
+          {
+            "texto": "Superaquecimento do motor",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "A função do sistema de arrefecimento é:",
+        "alternativas": [
+          {
+            "texto": "Limpar o para-brisa",
+            "correta": false
+          },
+          {
+            "texto": "Manter o motor na temperatura ideal de funcionamento",
+            "correta": true
+          },
+          {
+            "texto": "Carregar a bateria",
+            "correta": false
+          },
+          {
+            "texto": "Aumentar a potência dos freios",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "Pneus com sulcos abaixo de 1,6 mm (indicador TWI) devem:",
+        "alternativas": [
+          {
+            "texto": "Ser substituídos",
+            "correta": true
+          },
+          {
+            "texto": "Ser recalibrados com mais ar",
+            "correta": false
+          },
+          {
+            "texto": "Ser usados apenas em dias secos",
+            "correta": false
+          },
+          {
+            "texto": "Ser trocados de posição entre si",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "O sistema de freios ABS serve para:",
+        "alternativas": [
+          {
+            "texto": "Substituir o freio de estacionamento",
+            "correta": false
+          },
+          {
+            "texto": "Evitar o travamento das rodas em frenagens bruscas, mantendo a dirigibilidade",
+            "correta": true
+          },
+          {
+            "texto": "Frear o carro sozinho sem o condutor pisar",
+            "correta": false
+          },
+          {
+            "texto": "Diminuir o consumo de combustível",
+            "correta": false
+          }
+        ]
+      },
+      {
+        "enunciado": "O nível do óleo do motor deve ser verificado:",
+        "alternativas": [
+          {
+            "texto": "Com o motor ligado e acelerado",
+            "correta": false
+          },
+          {
+            "texto": "Somente na troca de óleo",
+            "correta": false
+          },
+          {
+            "texto": "Logo após uma viagem longa, com o motor quente",
+            "correta": false
+          },
+          {
+            "texto": "Com o veículo em local plano e o motor desligado (de preferência frio)",
+            "correta": true
+          }
+        ]
+      },
+      {
+        "enunciado": "A bateria do veículo é responsável por:",
+        "alternativas": [
+          {
+            "texto": "Filtrar o ar que entra no motor",
+            "correta": false
+          },
+          {
+            "texto": "Fornecer energia para a partida e para os sistemas elétricos com o motor desligado",
+            "correta": true
+          },
+          {
+            "texto": "Resfriar o motor",
+            "correta": false
+          },
+          {
+            "texto": "Lubrificar as peças do motor",
+            "correta": false
+          }
+        ]
+      }
+    ]
+  }
+]

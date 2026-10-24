@@ -1,3 +1,6 @@
+// Registros da tabela por id: o botão Editar busca aqui (evita colocar JSON dentro do HTML).
+const registrosPorId = {};
+
 const formMaterial = document.querySelector("#form-material");
 const materialIdCampo = document.querySelector("#material-id");
 const campoCategoria = document.querySelector("#categoria_id");
@@ -37,10 +40,11 @@ function renderizarMateriais(materiais) {
     }
     materiais.forEach((m) => {
         const linha = document.createElement("tr");
+        registrosPorId[m.id] = m;
         linha.innerHTML = `
-            <td>${m.id}</td><td>${m.categoria_nome || "—"}</td><td>${m.conteudo.substring(0, 80)}...</td>
+            <td>${m.id}</td><td>${escaparHtml(m.categoria_nome || "—")}</td><td>${escaparHtml(m.conteudo.substring(0, 80))}...</td>
             <td>
-                <a href="#" onclick='prepararEdicao(${JSON.stringify(m)}); return false;'>Editar</a>
+                <a href="#" onclick="prepararEdicao(registrosPorId[${m.id}]); return false;">Editar</a>
                 &nbsp;|&nbsp;
                 <a href="#" style="color:#e53e3e;" onclick="deletarMaterial(${m.id}); return false;">Excluir</a>
             </td>`;

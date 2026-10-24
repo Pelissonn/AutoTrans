@@ -10,10 +10,25 @@ function navigateTo(screenId) {
         activeScreen.classList.add('active');
     }
 
-    if (screenId === 'screen-trails') animarBarrasDeProgresso();
+    if (screenId === 'screen-trails') {
+        animarBarrasDeProgresso();
+        if (typeof carregarTrilhas === 'function') carregarTrilhas(); // atualiza o progresso
+    }
     if (screenId === 'screen-result') gerarConfetes();
     if (screenId === 'screen-historico' && typeof carregarHistorico === 'function') {
         carregarHistorico();
+    }
+    if (screenId === 'screen-dashboard' && typeof carregarSequencia === 'function') {
+        carregarSequencia();
+    }
+    if (screenId === 'screen-ranking' && typeof carregarRanking === 'function') {
+        carregarRanking();
+    }
+    if (screenId === 'screen-erros' && typeof carregarCadernoErros === 'function') {
+        carregarCadernoErros();
+    }
+    if (screenId === 'screen-favoritos' && typeof carregarFavoritos === 'function') {
+        carregarFavoritos();
     }
 }
 
@@ -21,7 +36,7 @@ function navigateTo(screenId) {
 // MODO ESCURO (SWITCH)
 // ==========================================
 const themeSwitch = document.getElementById('theme-toggle-switch');
-const savedTheme = localStorage.getItem('autotran-theme');
+const savedTheme = localStorage.getItem('autotrans-theme');
 
 if (savedTheme) {
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -32,101 +47,12 @@ if (themeSwitch) {
     themeSwitch.addEventListener('change', function() {
         if (this.checked) {
             document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('autotran-theme', 'dark');
+            localStorage.setItem('autotrans-theme', 'dark');
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
-            localStorage.setItem('autotran-theme', 'light');
+            localStorage.setItem('autotrans-theme', 'light');
         }
     });
-}
-
-// ==========================================
-// LÓGICA DINÂMICA DO QUIZ (1 A 10)
-// ==========================================
-
-const quizData = [
-    { pergunta: "O que significa a placa de advertência com o desenho de um semáforo?", opcoes: ["Parada Obrigatória à frente", "Semáforo à frente", "Dê a preferência", "Trânsito impedido"], correta: 1 },
-    { pergunta: "A placa 'R-1' (Pare) é de formato octogonal com fundo vermelho. O que o condutor deve fazer ao avistá-la?", opcoes: ["Reduzir a velocidade", "Parar o veículo obrigatoriamente", "Buzinar", "Dar preferência apenas a pedestres"], correta: 1 },
-    { pergunta: "Qual a cor predominante da placa que indica 'Obras' (A-24)?", opcoes: ["Amarela", "Laranja", "Vermelha", "Azul"], correta: 1 },
-    { pergunta: "A placa de regulamentação 'R-33' (Seta em círculo) indica:", opcoes: ["Parada obrigatória", "Proibido virar à esquerda", "Movimento circular obrigatório na rotatória", "Trânsito de bicicletas"], correta: 2 },
-    { pergunta: "Qual a finalidade das placas de Regulamentação?", opcoes: ["Alertar sobre perigos na via", "Indicar direções e distâncias", "Informar proibições, obrigações ou restrições", "Educar os pedestres"], correta: 2 },
-    { pergunta: "A placa 'R-6a' (círculo vermelho com um corte diagonal) significa:", opcoes: ["Proibido Estacionar", "Proibido Parar e Estacionar", "Estacionamento Regulamentado", "Área de Carga e Descarga"], correta: 0 },
-    { pergunta: "A placa 'A-15' adverte o condutor da existência, adiante, de:", opcoes: ["Há obras na via", "Estreitamento de pista ao centro", "A pista passará a ter mão dupla", "Ponte estreita"], correta: 1 },
-    { pergunta: "As placas de Indicação têm a função de:", opcoes: ["Ditar regras de trânsito", "Alertar sobre perigos", "Orientar sobre destinos, distâncias e serviços", "Multar infratores"], correta: 2 },
-    { pergunta: "A placa de regulamentação 'R-24a' (Seta apontando para a direita) indica:", opcoes: ["Sentido duplo", "Sentido obrigatório", "Passagem obrigatória", "Siga em frente ou à direita"], correta: 1 },
-    { pergunta: "A placa 'A-21a' adverte o condutor sobre o que à frente?", opcoes: ["Estreitamento de pista à esquerda", "Estreitamento de pista à direita", "Alargamento de pista à esquerda", "Deslizamento de terra"], correta: 0 }
-];
-
-let questaoAtualIndex = 0;
-let opcaoSelecionada = null;
-let acertos = 0;
-
-function iniciarQuiz() {
-    questaoAtualIndex = 0;
-    acertos = 0;
-    carregarQuestao();
-    navigateTo('screen-quiz');
-}
-
-function carregarQuestao() {
-    opcaoSelecionada = null;
-    const q = quizData[questaoAtualIndex];
-
-    document.getElementById('quiz-contador').textContent = `Questão ${questaoAtualIndex + 1}/10`;
-    document.getElementById('quiz-pergunta').textContent = q.pergunta;
-
-    const letras = ['A) ', 'B) ', 'C) ', 'D) '];
-    for (let i = 0; i < 4; i++) {
-        const btn = document.getElementById(`btn-op-${i}`);
-        btn.textContent = letras[i] + q.opcoes[i];
-        btn.className = 'quiz-option';
-    }
-
-    const btnConfirmar = document.getElementById('btn-confirmar');
-    btnConfirmar.textContent = 'Confirmar Resposta';
-    btnConfirmar.onclick = confirmarResposta;
-}
-
-function selecionarOpcao(index) {
-    const btnConfirmarText = document.getElementById('btn-confirmar').textContent;
-    if (btnConfirmarText === 'Próxima Questão' || btnConfirmarText === 'Ver Resultados') return;
-
-    opcaoSelecionada = index;
-    for (let i = 0; i < 4; i++) document.getElementById(`btn-op-${i}`).classList.remove('selected');
-    document.getElementById(`btn-op-${index}`).classList.add('selected');
-}
-
-function confirmarResposta() {
-    if (opcaoSelecionada === null) { alert('Selecione uma alternativa antes de confirmar!'); return; }
-
-    const q = quizData[questaoAtualIndex];
-    const btnClicado = document.getElementById(`btn-op-${opcaoSelecionada}`);
-
-    if (opcaoSelecionada === q.correta) {
-        btnClicado.classList.add('selected');
-        btnClicado.classList.remove('error');
-        acertos++;
-    } else {
-        btnClicado.classList.add('error');
-        btnClicado.classList.remove('selected');
-        document.getElementById(`btn-op-${q.correta}`).classList.add('selected');
-    }
-
-    const btnConfirmar = document.getElementById('btn-confirmar');
-    if (questaoAtualIndex === quizData.length - 1) {
-        btnConfirmar.textContent = 'Ver Resultados';
-        btnConfirmar.onclick = finalizarQuiz;
-    } else {
-        btnConfirmar.textContent = 'Próxima Questão';
-        btnConfirmar.onclick = () => { questaoAtualIndex++; carregarQuestao(); };
-    }
-}
-
-function finalizarQuiz() {
-    document.getElementById('resultado-acertos').textContent = `${acertos}/10`;
-    const totalXP = acertos * 15;
-    document.getElementById('resultado-xp').textContent = `+${totalXP}`;
-    navigateTo('screen-result');
 }
 
 // ==========================================
@@ -164,11 +90,6 @@ function virarCard(cardElement) {
     cardElement.classList.toggle('flipped');
 }
 
-function proximoCard() {
-    const card = document.querySelector('.flashcard-scene');
-    card.classList.remove('flipped');
-    setTimeout(() => alert("Carregando próxima placa..."), 400);
-}
 
 // ==========================================
 // NAVEGAÇÃO VIA HASH DA URL

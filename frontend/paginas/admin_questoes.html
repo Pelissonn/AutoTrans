@@ -18,6 +18,7 @@
             <a href="admin_questoes.html" class="sidebar-link">🛠️ Questões</a>
             <a href="admin_alternativas.html" class="sidebar-link">🛠️ Alternativas</a>
             <a href="admin_materiais.html" class="sidebar-link">🛠️ Materiais</a>
+            <a href="admin_relatorio.html" class="sidebar-link">📈 Relatório</a>
         </nav>
         <div class="sidebar-footer"><a href="painel.html" class="sidebar-sair">← Voltar</a></div>
     </aside>
@@ -42,6 +43,18 @@
             <button type="button" id="botao-cancelar" class="btn btn-dark-green">Cancelar edição</button>
         </form>
         <p id="mensagem"></p>
+
+        <h3 style="text-align:left; margin-top:30px;">Importar questões em lote (arquivo .json)</h3>
+        <p style="text-align:left; font-size:13px;">
+            O arquivo deve ser uma lista de categorias, cada uma com suas questões e
+            alternativas (modelo em <code>backend/database/questoes_iniciais.json</code>).
+            Categorias e questões que já existem são reaproveitadas — não duplicam.
+        </p>
+        <div class="form-grupo">
+            <input type="file" id="arquivo-importacao" accept=".json">
+        </div>
+        <button type="button" id="botao-importar" class="btn">Importar arquivo</button>
+        <div id="resultado-importacao" style="text-align:left; margin-top:15px;"></div>
 
         <h3 style="text-align:left; margin-top:30px;">Questões cadastradas</h3>
         <table>

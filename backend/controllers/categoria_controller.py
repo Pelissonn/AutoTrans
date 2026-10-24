@@ -1,85 +1,53 @@
-from flask import Blueprint, jsonify, request
-from sqlalchemy.exc import SQLAlchemyError
+from flask import Blueprint
 
-from auth_utils import admin_obrigatorio
-from models import db
-from services.categorias.create_categoria_service import CadastrarCategoriaService
-from services.categorias.read_categoria_service import (
-    BuscarCategoriaPorIdService,
+from controllers.base_controller import ERROS_DE_NEGOCIO, BaseController
+from services.categorias import (
+    BuscarCategoriaService,
+    CadastrarCategoriaService,
+    EditarCategoriaService,
+    ExcluirCategoriaService,
     ListarCategoriasService,
 )
-from services.categorias.update_categoria_service import EditarCategoriaService
-from services.categorias.delete_categoria_service import DeletarCategoriaService
+from utils.auth import admin_obrigatorio
 
 categoria_bp = Blueprint("categoria", __name__, url_prefix="/categorias")
 
-# Listar/buscar categorias continua público (todo aluno precisa ver as
-# trilhas). Só cadastrar/editar/apagar exige administrador.
+
+class CategoriaController(BaseController):
+    """Categorias (trilhas): leitura pública, escrita só administrador."""
+
+    def get(self, id=None):
+        if id is None:
+            return self.responder(ListarCategoriasService().executar())
+        try:
+            return self.responder(BuscarCategoriaService().executar(id))
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
+
+    @admin_obrigatorio
+    def post(self):
+        dados = self.dados_json()
+        try:
+            categoria = CadastrarCategoriaService().executar(dados.get("nome"), dados.get("descricao"))
+            return self.responder(categoria, 201)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
+
+    @admin_obrigatorio
+    def put(self, id):
+        dados = self.dados_json()
+        try:
+            categoria = EditarCategoriaService().executar(id, dados.get("nome"), dados.get("descricao"))
+            return self.responder(categoria)
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
+
+    @admin_obrigatorio
+    def delete(self, id):
+        try:
+            return self.responder(ExcluirCategoriaService().executar(id))
+        except ERROS_DE_NEGOCIO as erro:
+            return self.responder_erro(erro)
 
 
-@categoria_bp.get("/")
-def listar():
-    service = ListarCategoriasService()
-    categorias = service.executar()
-    return jsonify(categorias), 200
-
-
-@categoria_bp.get("/<int:id>")
-def buscar(id):
-    service = BuscarCategoriaPorIdService()
-    categoria = service.executar(id)
-
-    if categoria is None:
-        return jsonify({"erro": "Categoria não encontrada."}), 404
-
-    return jsonify(categoria), 200
-
-
-@categoria_bp.post("/")
-@admin_obrigatorio
-def cadastrar():
-    try:
-        dados = request.get_json() or {}
-        service = CadastrarCategoriaService()
-        categoria = service.executar(dados.get("nome"), dados.get("descricao"))
-        return jsonify(categoria), 201
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao salvar categoria no banco de dados."}), 500
-
-
-@categoria_bp.put("/<int:id>")
-@admin_obrigatorio
-def editar(id):
-    try:
-        dados = request.get_json() or {}
-        service = EditarCategoriaService()
-        categoria = service.executar(id, dados.get("nome"), dados.get("descricao"))
-        return jsonify(categoria), 200
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao atualizar categoria no banco de dados."}), 500
-
-
-@categoria_bp.delete("/<int:id>")
-@admin_obrigatorio
-def deletar(id):
-    try:
-        service = DeletarCategoriaService()
-        service.executar(id)
-        return "", 204
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao deletar categoria no banco de dados."}), 500
+CategoriaController.registrar_crud(categoria_bp, "categoria_api")

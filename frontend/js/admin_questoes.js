@@ -1,3 +1,6 @@
+// Registros da tabela por id: o botão Editar busca aqui (evita colocar JSON dentro do HTML).
+const registrosPorId = {};
+
 const formQuestao = document.querySelector("#form-questao");
 const questaoIdCampo = document.querySelector("#questao-id");
 const campoEnunciado = document.querySelector("#enunciado");
@@ -35,10 +38,11 @@ function renderizarQuestoes(questoes) {
     }
     questoes.forEach((q) => {
         const linha = document.createElement("tr");
+        registrosPorId[q.id] = q;
         linha.innerHTML = `
-            <td>${q.id}</td><td>${q.enunciado}</td><td>${q.categoria_nome || "—"}</td>
+            <td>${q.id}</td><td>${escaparHtml(q.enunciado)}</td><td>${escaparHtml(q.categoria_nome || "—")}</td>
             <td>
-                <a href="#" onclick='prepararEdicao(${JSON.stringify(q)}); return false;'>Editar</a>
+                <a href="#" onclick="prepararEdicao(registrosPorId[${q.id}]); return false;">Editar</a>
                 &nbsp;|&nbsp;
                 <a href="#" style="color:#e53e3e;" onclick="deletarQuestao(${q.id}); return false;">Excluir</a>
             </td>`;
@@ -93,8 +97,57 @@ async function deletarQuestao(id) {
     }
 }
 
+// ==========================================
+// IMPORTAR QUESTÕES EM LOTE (POST /questoes/importar)
+// ==========================================
+const campoArquivo = document.querySelector("#arquivo-importacao");
+const botaoImportar = document.querySelector("#botao-importar");
+const divResultadoImportacao = document.querySelector("#resultado-importacao");
+
+async function importarArquivo() {
+    divResultadoImportacao.innerHTML = "";
+
+    const arquivo = campoArquivo.files[0];
+    if (!arquivo) {
+        divResultadoImportacao.innerHTML = `<p style="color:#e53e3e;">Escolha um arquivo .json primeiro.</p>`;
+        return;
+    }
+
+    let dados;
+    try {
+        dados = JSON.parse(await arquivo.text());
+    } catch (erro) {
+        divResultadoImportacao.innerHTML = `<p style="color:#e53e3e;">Arquivo inválido: ${escaparHtml(erro.message)}</p>`;
+        return;
+    }
+
+    try {
+        const resumo = await api.post("/questoes/importar", dados);
+        let html = `
+            <p style="color:#38a169; font-weight:600;">Importação concluída.</p>
+            <ul>
+                <li>Categorias novas: ${resumo.categorias_novas}</li>
+                <li>Categorias reaproveitadas: ${resumo.categorias_reaproveitadas}</li>
+                <li>Questões novas: ${resumo.questoes_novas}</li>
+                <li>Questões já existentes (puladas): ${resumo.questoes_puladas}</li>
+                <li>Alternativas novas: ${resumo.alternativas_novas}</li>
+            </ul>`;
+        if (resumo.erros.length > 0) {
+            html += `<p style="color:#e53e3e; font-weight:600;">Avisos:</p><ul>`;
+            resumo.erros.forEach((aviso) => { html += `<li style="color:#e53e3e;">${escaparHtml(aviso)}</li>`; });
+            html += `</ul>`;
+        }
+        divResultadoImportacao.innerHTML = html;
+        await carregarCategoriasNoSelect();
+        await listarQuestoes();
+    } catch (erro) {
+        divResultadoImportacao.innerHTML = `<p style="color:#e53e3e;">${escaparHtml(erro.message)}</p>`;
+    }
+}
+
 formQuestao.addEventListener("submit", salvarQuestao);
 botaoCancelar.addEventListener("click", limparFormulario);
+botaoImportar.addEventListener("click", importarArquivo);
 
 (async () => {
     await carregarCategoriasNoSelect();
